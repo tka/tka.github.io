@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tka&#39;s blog</title>
+    <link>http://blog.tka.lu/</link>
+    <description>Recent content on tka&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-tw</language>
+    <lastBuildDate>Mon, 26 Aug 2013 23:33:00 +0800</lastBuildDate>
+    <atom:link href="http://blog.tka.lu/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Arch Linux 字型設定</title>
+      <link>http://blog.tka.lu/post/2013-08-26-archlinux-zi-xing-she-ding/</link>
+      <pubDate>Mon, 26 Aug 2013 23:33:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2013-08-26-archlinux-zi-xing-she-ding/</guid>
+      <description>&lt;p&gt;用了好一陣子的 Arch Linux 搭 KDE, 最近裝新機器時又覺得字型怎麼調都不對, 之前都是採用 &lt;a href=&#34;https://wiki.archlinux.org/index.php/Font_Configuration#Ubuntu&#34;&gt;Ubuntu 的字型解決方案&lt;/a&gt; 不過這次怎麼調都不順眼, 乾脆改用 &lt;a href=&#34;https://wiki.archlinux.org/index.php/Font_Configuration#Infinality&#34;&gt;Infinality 的方案&lt;/a&gt;,
+直接安裝打包好的整包套件 &lt;a href=&#34;https://wiki.archlinux.org/index.php/Font_Configuration#Install_from_custom_repository&#34;&gt;infinality-bundle&lt;/a&gt;.
+然後在 &lt;code&gt;~/.config/fontconfig/fonts.conf&lt;/code&gt; 裡面加入習慣的字型順序, 像是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  &amp;lt;alias binding=&amp;quot;strong&amp;quot;&amp;gt;
+    &amp;lt;family&amp;gt;serif&amp;lt;/family&amp;gt;
+    &amp;lt;prefer&amp;gt;
+      &amp;lt;family&amp;gt;DejaVu Serif&amp;lt;/family&amp;gt;
+      &amp;lt;family&amp;gt;Droid Sans Fallback&amp;lt;/family&amp;gt;
+    &amp;lt;/prefer&amp;gt;
+  &amp;lt;/alias&amp;gt;
+
+  &amp;lt;alias binding=&amp;quot;strong&amp;quot;&amp;gt;
+    &amp;lt;family&amp;gt;sans-serif&amp;lt;/family&amp;gt;
+    &amp;lt;prefer&amp;gt;
+      &amp;lt;family&amp;gt;DejaVu Sans&amp;lt;/family&amp;gt;
+      &amp;lt;family&amp;gt;Droid Sans Fallback&amp;lt;/family&amp;gt;
+    &amp;lt;/prefer&amp;gt;
+  &amp;lt;/alias&amp;gt;
+
+  &amp;lt;alias binding=&amp;quot;strong&amp;quot;&amp;gt;
+    &amp;lt;family&amp;gt;monospace&amp;lt;/family&amp;gt;
+    &amp;lt;prefer&amp;gt;
+      &amp;lt;family&amp;gt;DejaVu Sans Mono&amp;lt;/family&amp;gt;
+      &amp;lt;family&amp;gt;Droid Sans Fallback&amp;lt;/family&amp;gt;
+    &amp;lt;/prefer&amp;gt;
+  &amp;lt;/alias&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;基本上效果還不錯, 應該會先用一陣子, 哪天不順眼了再調整&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>從 windows8 iso 檔建立安裝隨身碟</title>
+      <link>http://blog.tka.lu/post/2013-08-24-cong-windows8-iso-dang-jian-li-an-zhuang-sui-shen-die/</link>
+      <pubDate>Sat, 24 Aug 2013 00:13:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2013-08-24-cong-windows8-iso-dang-jian-li-an-zhuang-sui-shen-die/</guid>
+      <description>&lt;p&gt;步驟大致上是&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;挑隻4G以上的隨身碟&lt;/li&gt;
+&lt;li&gt;把隨身碟格式化成 NTFS 格式&lt;/li&gt;
+&lt;li&gt;sudo mount -o loop windows8.iso /mnt/win_iso&lt;/li&gt;
+&lt;li&gt;cp -R /mnt/win_iso/* usb_disk&lt;/li&gt;
+&lt;li&gt;sudo sync&lt;/li&gt;
+&lt;li&gt;sudo ms-sys -7 /dev/usb_disk&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>設定YARD環境</title>
+      <link>http://blog.tka.lu/post/2013-08-21-she-ding-yardhuan-jing/</link>
+      <pubDate>Wed, 21 Aug 2013 03:13:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2013-08-21-she-ding-yardhuan-jing/</guid>
+      <description>&lt;p&gt;添加專案中的 &lt;code&gt;Gemfile&lt;/code&gt; 與 &lt;code&gt;.yardopts&lt;/code&gt; 如下&lt;/p&gt;
+
+&lt;p&gt;Gemfile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;group :development do
+  gem &#39;guard&#39;
+  gem &#39;guard-yard&#39;
+  gem &#39;redcarpet&#39;
+  gem &#39;github-markup&#39;
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;.yardopts&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;--markup-provider=redcarpet
+--markup=markdown
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;接下來執行 &lt;code&gt;guard init yard&lt;/code&gt; 初始化 guard 的環境,
+之後只需要執行 &lt;code&gt;guard start&lt;/code&gt; 便可監控檔案異動, 立刻透過 YARD 產生文件&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ruby-tuesday-25-分享</title>
+      <link>http://blog.tka.lu/post/2013-08-10-ruby-tuesday-25-fen-xiang/</link>
+      <pubDate>Sat, 10 Aug 2013 15:55:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2013-08-10-ruby-tuesday-25-fen-xiang/</guid>
+      <description>&lt;p&gt;上個月底在 Tuby Tuesday 25 分享了, 利用 ruby library 實作 Collaborative Filtering 推薦系統的心得&lt;/p&gt;
+
+&lt;p&gt;投影片如下&lt;/p&gt;
+
+&lt;script async class=&#34;speakerdeck-embed&#34; data-id=&#34;4f5346c0db6301305e137a9184b31ee5&#34; data-ratio=&#34;1.33507170795306&#34; src=&#34;//speakerdeck.com/assets/embed.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Mahout 搭配 JRuby 建立環境與簡單測試</title>
+      <link>http://blog.tka.lu/post/2012-10-14-jian-li-mahout-huan-jing/</link>
+      <pubDate>Sun, 14 Oct 2012 11:22:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-10-14-jian-li-mahout-huan-jing/</guid>
+      <description>
+
+&lt;h1 id=&#34;建立環境:39c51cddf9d8befaa56d8c9c678b90e8&#34;&gt;建立環境&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;下載&amp;amp;安裝 Mahout
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout&#34;&gt;https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;下載&amp;amp;安裝 Hadoop
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.apache.org/dyn/closer.cgi/hadoop/common/&#34;&gt;http://www.apache.org/dyn/closer.cgi/hadoop/common/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;單機安裝步驟 &lt;a href=&#34;http://hadoop.apache.org/common/docs/stable/single_node_setup.html&#34;&gt;http://hadoop.apache.org/common/docs/stable/single_node_setup.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;設定 ClASSPATH&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt; export CLASSPATH=.:~/Project/Mahout/mahout-distribution-0.7/mahout-core-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/mahout-math-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/lib/&#39;*&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;簡單測試:39c51cddf9d8befaa56d8c9c678b90e8&#34;&gt;簡單測試&lt;/h1&gt;
+
+&lt;p&gt;可以從 &lt;a href=&#34;https://github.com/tdunning/MiA&#34;&gt;https://github.com/tdunning/MiA&lt;/a&gt; 下載 Mahout in Action 的範例程式, 這邊選擇第2章的 &lt;a href=&#34;https://github.com/tdunning/MiA/blob/mahout-0.7/src/main/java/mia/recommender/ch02/RecommenderIntro.java&#34;&gt;RecommenderIntro.java&lt;/a&gt; 來將他改寫為 JRuby 的版本, 改寫的結果如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;require &#39;java&#39;
+
+module Mahout
+  include_package &amp;quot;org.apache.mahout.cf.taste.impl.model.file&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.impl.neighborhood&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.impl.recommender&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.impl.similarity&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.model&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.neighborhood&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.recommender&amp;quot;;
+  include_package &amp;quot;org.apache.mahout.cf.taste.similarity&amp;quot;;
+
+end
+
+model = Mahout::FileDataModel.new( java.io.File.new(&amp;quot;intro.csv&amp;quot;));
+
+similarity = Mahout::PearsonCorrelationSimilarity.new(model);
+neighborhood = Mahout::NearestNUserNeighborhood.new(2, similarity, model);
+
+recommender = Mahout::GenericUserBasedRecommender.new( model, neighborhood, similarity);
+
+recommendation =recommender.recommend(1, 1);
+
+puts recommendation
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java7 &#43; JRuby 1.7.0.preview2 &#43; Rawr</title>
+      <link>http://blog.tka.lu/post/2012-08-24-java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/</link>
+      <pubDate>Fri, 24 Aug 2012 22:16:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-08-24-java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/</guid>
+      <description>&lt;p&gt;這兩天試著把 &lt;a href=&#34;http://fireapp.handlino.com/&#34;&gt;Fire.app&lt;/a&gt; 升級到 &lt;a href=&#34;http://jruby.org/&#34;&gt;JRuby&lt;/a&gt; 1.7.0.preview2, 過程中遇到一些 ruby 1.8.7 升級到 1.9.3 的小問題, 不過解決起來還算順手。後來同事想試試看搭配 Java7 的效果如何這時候就遇到問題了。&lt;/p&gt;
+
+&lt;p&gt;原因在於之前打包是使用 &lt;a href=&#34;https://github.com/rawr/rawr&#34;&gt;Rawr&lt;/a&gt;, 但是他使用的 &lt;a href=&#34;http://launch4j.sourceforge.net/&#34;&gt;launch4j&lt;/a&gt; 在 OS X 上面搭配 Java7 打包出來的程式無法順利執行。 看起來是因為　Java7 不是 apple 放出來的版本造成的。所以必須要改用 &lt;a href=&#34;http://java.net/projects/appbundler&#34;&gt;Java Application Bundler&lt;/a&gt;, 這邊最簡單的方法就是一樣用 Rawr 建立 jar 檔, 然後改寫　rawr:bundle:app 這個 rake task 就好了。&lt;/p&gt;
+
+&lt;p&gt;主要需要處理的部份有&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;移動程式目錄裡面的 &lt;code&gt;Contents/Resources/Java&lt;/code&gt; 到 &lt;code&gt;Contents/Java&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;複製 Java Application Bundler 專案中的 &lt;code&gt;JavaAppLauncher&lt;/code&gt; 這個檔案到 &lt;code&gt;Contents/MacOS&lt;/code&gt; 目錄下&lt;/li&gt;
+&lt;li&gt;改寫 &lt;code&gt;Contents/Info.plist&lt;/code&gt; 的部份內容如下, 這邊的細節可以參考 Java Application Bundler 的文件跟 source&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;    &amp;lt;key&amp;gt;CFBundleExecutable&amp;lt;/key&amp;gt;
+    &amp;lt;string&amp;gt;JavaAppLauncher&amp;lt;/string&amp;gt;
+    &amp;lt;key&amp;gt;JVMMainClassName&amp;lt;/key&amp;gt;
+    &amp;lt;string&amp;gt;com.handlino.fireapp.Main&amp;lt;/string&amp;gt;
+    &amp;lt;key&amp;gt;JVMOptions&amp;lt;/key&amp;gt;
+    &amp;lt;array&amp;gt;
+      &amp;lt;key&amp;gt;-XstartOnFirstThread&amp;lt;/key&amp;gt; 
+    &amp;lt;/array&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;做好這些步驟之後, 就可以像過去一樣輕鬆的打包出各個平台使用 Java7 + JRuby 1.7.0.preview2 程式&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>rack 技巧</title>
+      <link>http://blog.tka.lu/post/2012-08-13-rack-auth-ji-qiao/</link>
+      <pubDate>Mon, 13 Aug 2012 12:58:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-08-13-rack-auth-ji-qiao/</guid>
+      <description>
+
+&lt;p&gt;最近比較常發佈基於 serve 的 rack app 到 heroku 上面, 通常是網站的 prototype.&lt;/p&gt;
+
+&lt;p&gt;常常因為網站不公開, 所以需要特定的人才看的到.&lt;/p&gt;
+
+&lt;p&gt;這時候只需要加一下 rack middleware 就可以達到這個需求&lt;/p&gt;
+
+&lt;h3 id=&#34;使用-rack-auth-basic:1124f57adb991e1c7ea2ffc148819e87&#34;&gt;使用 Rack::Auth::Basic&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;use Rack::Auth::Basic, &amp;quot;Snack cabinet&amp;quot; do |username, password|
+  username == &#39;admin&#39; &amp;amp;&amp;amp; password == &#39;foobar&#39;
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;使用-warden:1124f57adb991e1c7ea2ffc148819e87&#34;&gt;使用 Warden&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;require &amp;quot;warden&amp;quot;
+class FailLoginApp
+  def self.call(env)
+
+    [200, { &amp;quot;Content-Type&amp;quot; =&amp;gt; &amp;quot;text/html&amp;quot; }, [&amp;lt;&amp;lt;EOL
+      &amp;lt;html&amp;gt;
+      &amp;lt;body&amp;gt;
+      &amp;lt;h1&amp;gt;Login&amp;lt;/h1&amp;gt;
+      &amp;lt;form action=&amp;quot;/&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;
+    username:&amp;lt;input type=&amp;quot;text&amp;quot; name=&amp;quot;username&amp;quot;&amp;gt;
+
+    password:&amp;lt;input type=&amp;quot;password&amp;quot; name=&amp;quot;password&amp;quot;&amp;gt;
+    &amp;lt;input type=&amp;quot;submit&amp;quot;&amp;gt;
+    &amp;lt;/form&amp;gt;
+    &amp;lt;/body&amp;gt;
+    &amp;lt;/html&amp;gt;
+EOL
+    ]]  
+  end 
+end
+
+class CheckLogin
+
+  def initialize(app, opts={})
+    @app=app
+    @opts=opts
+  end
+
+  def call(env)
+    request = Rack::Request.new(env)
+
+    env[&#39;warden&#39;].logout if request.params[&amp;quot;logout&amp;quot;]
+    env[&#39;warden&#39;].authenticate!
+
+    @app.call(env)
+  end
+end
+
+Warden::Strategies.add(:password) do
+  def valid?
+    params[&amp;quot;username&amp;quot;] || params[&amp;quot;password&amp;quot;]
+  end
+
+  def authenticate!
+    if params[&amp;quot;username&amp;quot;] == &amp;quot;admin&amp;quot; &amp;amp;&amp;amp; params[&amp;quot;password&amp;quot;] == &amp;quot;foobar&amp;quot;  
+      success!({})
+    else
+      fail!(&amp;quot;Could not log in&amp;quot;)
+    end
+  end
+end
+
+use Rack::Session::Cookie
+
+use Warden::Manager do |manager|
+  manager.default_strategies :password
+  manager.failure_app = FailLoginApp
+end
+
+use CheckLogin
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>2012 JavaTwo</title>
+      <link>http://blog.tka.lu/post/2012-08-07-2012-javatwo/</link>
+      <pubDate>Tue, 07 Aug 2012 22:39:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-08-07-2012-javatwo/</guid>
+      <description>&lt;p&gt;今年 7月 20 日很幸運的有機會在 JavaTwo 大會上跟 @weijen 合講了一個關於 JRuby 的 session&lt;/p&gt;
+
+&lt;p&gt;我的部份投影片如下&lt;/p&gt;
+
+&lt;script async class=&#34;speakerdeck-embed&#34; data-id=&#34;5021266316e890000205c801&#34; data-ratio=&#34;1.3333333333333333&#34; src=&#34;//speakerdeck.com/assets/embed.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>將 Rails 專案中使用的 MySQL 轉移到 PostgreSQL</title>
+      <link>http://blog.tka.lu/post/2012-04-16-jiang-rails-zhuan-an-zhong-ji-you-de-mysql-zi-liao-zhuan-yi-dao-postgresql/</link>
+      <pubDate>Mon, 16 Apr 2012 15:13:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-04-16-jiang-rails-zhuan-an-zhong-ji-you-de-mysql-zi-liao-zhuan-yi-dao-postgresql/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;開一個新的 Rails 專案, DB 使用 PostgreSQL&lt;/li&gt;
+&lt;li&gt;將舊專案中的 db/schema.rb 改寫成新專案中的 db migration&lt;/li&gt;
+&lt;li&gt;在新專案中跑 &lt;code&gt;rake db:migrate&lt;/code&gt; 建立 PostgreSQL 中的資料庫&lt;/li&gt;
+&lt;li&gt;使用 &lt;a href=&#34;https://github.com/maxlapshin/mysql2postgres&#34;&gt;mysql2postgres&lt;/a&gt; 做轉移
+
+&lt;ul&gt;
+&lt;li&gt;因為 db schema 已經透過 Rails 機制完成轉移, 這邊轉移時只需要轉資料部份&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>elasticsearch入門筆記(2)</title>
+      <link>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-2/</link>
+      <pubDate>Sun, 26 Feb 2012 04:16:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-2/</guid>
+      <description>
+
+&lt;h2 id=&#34;field-種類:98c38dbcb71233e7f9b62c45085c2bbf&#34;&gt;field 種類&lt;/h2&gt;
+
+&lt;p&gt;來源: &lt;a href=&#34;http://www.elasticsearch.org/guide/reference/mapping/core-types.html&#34;&gt;http://www.elasticsearch.org/guide/reference/mapping/core-types.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;主要的資料格式摘要如下, 其他還有不少種類的資料格式可用.
+其他詳細的內容需要參考, 該頁面右邊 Types 下面的分類(這裡的Types是指欄位的種類 )
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;string&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;float, double, byte, short, integer, long&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;boolean&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;data&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;binary&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&amp;lt;!&amp;ndash; more &amp;ndash;&amp;gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;multi-field-欄位格式:98c38dbcb71233e7f9b62c45085c2bbf&#34;&gt;multi_field 欄位格式&lt;/h2&gt;
+
+&lt;p&gt;在許多field 種類中要特別提到的是multi_field, multi_field 可以做到的功能是u在建立 document 時, 將特定欄位給予多個 analyer(負責分詞的角色) 如此便可滿足中英文混雜的文章搜尋需求。&lt;/p&gt;
+
+&lt;p&gt;例如 &lt;code&gt;elasticsearch遠比上Google搜尋更有效率&lt;/code&gt; 需要在下列幾種輸入時都會被搜尋到&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;elast&lt;/code&gt;或是&lt;code&gt;elasticsearch&lt;/code&gt;: 只輸入了單字的前幾個字, 或是完整單字&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;更有效率&lt;/code&gt; 中文句子&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;這時候就可以將欄位設定成 multi_field, 並且設定兩個不同的分詞方式 &lt;code&gt;cjk&lt;/code&gt; 與 &lt;code&gt;edgeNGram&lt;/code&gt;, 其中 &lt;code&gt;cjk&lt;/code&gt; 會對中文的內容用 &lt;code&gt;nGram&lt;/code&gt; 進行切詞, 而 &lt;code&gt;edgeNGram&lt;/code&gt; 則會建立 &lt;code&gt;e&lt;/code&gt;, &lt;code&gt;el&lt;/code&gt;, &lt;code&gt;ela&lt;/code&gt;, &lt;code&gt;elas&lt;/code&gt;, &lt;code&gt;elast&lt;/code&gt;&amp;hellip;. 的切詞&lt;/p&gt;
+
+&lt;p&gt;另外要注意的事情是 multi_field 裏面建立的欄位並不包括在預設的搜尋欄位&lt;code&gt;_all&lt;/code&gt;中, 必須要特別指定才會被搜尋到&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>elasticsearch入門筆記(1)</title>
+      <link>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-1/</link>
+      <pubDate>Sat, 25 Feb 2012 16:08:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-1/</guid>
+      <description>
+
+&lt;h2 id=&#34;角色關係對照:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;角色關係對照&lt;/h2&gt;
+
+&lt;p&gt;elasticsearch 跟 MySQL 中定義資料格式的角色關係對照表如下&lt;/p&gt;
+
+&lt;table class=&#34;midden center&#34;&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;MySQL&lt;/th&gt;&lt;th&gt;elasticsearch&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;database&lt;/td&gt;     &lt;td&gt;index&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;table&lt;/td&gt;        &lt;td&gt;type&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;table schema&lt;/td&gt; &lt;td&gt;mapping&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;row&lt;/td&gt;          &lt;td&gt;document&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;field&lt;/td&gt;        &lt;td&gt;field&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&#34;設定檔與目錄配置:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;設定檔與目錄配置&lt;/h2&gt;
+
+&lt;p&gt;參考:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.elasticsearch.org/guide/reference/setup/dir-layout.html&#34;&gt;http://www.elasticsearch.org/guide/reference/setup/dir-layout.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.elasticsearch.org/guide/reference/setup/configuration.html&#34;&gt;http://www.elasticsearch.org/guide/reference/setup/configuration.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;建立-index:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;建立 index&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;curl -XPUT &#39;http://localhost:9200/my_index_name/&#39;&lt;/code&gt; 這邊的 &lt;code&gt;my_index_name&lt;/code&gt; 就是要被建立的 index 的名字&lt;/p&gt;
+
+&lt;h2 id=&#34;設定-index:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;設定 index&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPUT &#39;localhost:9200/my_index_name/_settings&#39; -d &#39;
+{
+    &amp;quot;index&amp;quot; : {
+        &amp;quot;number_of_replicas&amp;quot; : 4
+    }
+}
+&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以設定的參數在 &lt;a href=&#34;http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html&#34;&gt;這頁&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;建立-type-與-mapping:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;建立 type 與 mapping&lt;/h2&gt;
+
+&lt;p&gt;在預設的情況下 elasticsearch 會自動建立 type 跟 mapping, 但是我會建議自行定義 mapping 的內容, 因為這樣可以做出比較符合需求的設定,例如不同的欄位要使用不同的分詞方式&lt;/p&gt;
+
+&lt;p&gt;下面的範例中 &lt;code&gt;my_index_name&lt;/code&gt;, &lt;code&gt;my_type_name&lt;/code&gt;, &lt;code&gt;my_field_name&lt;/code&gt; 都是自己命名的&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPUT &#39;http://localhost:9200/my_index_name/my_type_name/_mapping&#39; -d &#39;
+{
+    &amp;quot;my_type_name&amp;quot; : {
+        &amp;quot;properties&amp;quot; : {
+            &amp;quot;my_field_name&amp;quot; : {&amp;quot;type&amp;quot; : &amp;quot;string&amp;quot;, &amp;quot;store&amp;quot; : &amp;quot;yes&amp;quot;},
+            &amp;quot;my_field_name2&amp;quot; : {&amp;quot;type&amp;quot; : &amp;quot;string&amp;quot;, &amp;quot;store&amp;quot; : &amp;quot;yes&amp;quot;},
+            &amp;quot;my_field_name3&amp;quot; : {&amp;quot;type&amp;quot; : &amp;quot;date&amp;quot;, &amp;quot;store&amp;quot; : &amp;quot;yes&amp;quot;}
+        }
+    }
+}
+&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;每個欄位的定義, 會像是 &lt;code&gt;&amp;quot;my_field_name&amp;quot; : {&amp;quot;type&amp;quot; : &amp;quot;string&amp;quot;, &amp;quot;store&amp;quot; : &amp;quot;yes&amp;quot;}&lt;/code&gt; 這樣子,
+常用的欄位格式定義可以參考&lt;a href=&#34;http://www.elasticsearch.org/guide/reference/mapping/core-types.html&#34;&gt;這頁&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;建立搜尋資料:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;建立搜尋資料&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPOST &#39;localhost:9200/my_index_name/my_type_name/1&#39; -d &#39; 
+{
+    &amp;quot;my_field_name&amp;quot; : &amp;quot;test&amp;quot;,
+    &amp;quot;my_field_name2&amp;quot;: &amp;quot;test2&amp;quot;,
+    &amp;quot;my_fidle_name3&amp;quot;: &amp;quot;2012-02-1&amp;quot;
+}
+&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;my_index_name/my_type_name/1&lt;/code&gt; 中的&lt;code&gt;1&lt;/code&gt;代表的是這比資料的&lt;code&gt;id&lt;/code&gt;, 建議寫入資料庫裏面的 primaty key, 如果沒有設定的話, 會自動產生像是&lt;code&gt;EYQqF6eyTJGJ-6aZiIYZsg&lt;/code&gt;的內容&lt;/p&gt;
+
+&lt;h2 id=&#34;搜尋資料:74d1c7f17977e78f5dc1bb90e8606647&#34;&gt;搜尋資料&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -XPOST &#39;localhost:9200/my_index_name/my_type_name/_search&#39; -d &#39;
+{ 
+    &amp;quot;query&amp;quot;:{ 
+        &amp;quot;text&amp;quot;:{ &amp;quot;_all&amp;quot;:&amp;quot;test&amp;quot;}
+    }
+}
+&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;詳細搜尋的語法需參考&lt;a href=&#34;http://www.elasticsearch.org/guide/reference/query-dsl/&#34;&gt;這頁&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>在 &lt;del&gt;Compass.app&lt;/del&gt; Fire.app 中使用ERB/Haml樣板語言</title>
+      <link>http://blog.tka.lu/post/2012-02-20-zai-compassappzhong-shi-yong-erb-slash-hamlyang-ban/</link>
+      <pubDate>Mon, 20 Feb 2012 22:02:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-02-20-zai-compassappzhong-shi-yong-erb-slash-hamlyang-ban/</guid>
+      <description>
+
+&lt;h2 id=&#34;2012-04-17-更新:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;2012-04-17 更新&lt;/h2&gt;
+
+&lt;p&gt;文中提到的 Compass.app, 正式發行時改名為 &lt;a href=&#34;http://fireapp.handlino.com&#34;&gt;Fire.app&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;簡介:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;簡介&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://compass.handlino.com/&#34;&gt;Coompass.app&lt;/a&gt;將要釋出新版本支援 ERB/Haml 樣板, 過去使用 Compass.app 雖然提供了簡單的 web server, 但是做網站 prototype 時, 總是要一頁一頁 html 用手工刻. 但是現在不用了因為即將更新的 Compass.app 會支援 ERB 跟 Haml 兩種樣板語言&lt;/p&gt;
+
+&lt;h2 id=&#34;改用-erb-或-haml-樣板語言的好處:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;改用 ERB 或 Haml 樣板語言的好處&lt;/h2&gt;
+
+&lt;h4 id=&#34;可以套用-layout-跟使用-partial:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以套用 layout 跟使用 partial&lt;/h4&gt;
+
+&lt;p&gt;網站的 Header 與 Footer 常常是重複的, 當老闆說網站的標題要改掉時, 原本你需要改100個頁面, 現在你只需要改一個檔案就可以了, 或是寫過的 sidebar , 寫新的一頁時再也不用整段 html 複製貼上了.&lt;/p&gt;
+
+&lt;h4 id=&#34;可以使用-helper:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以使用 helper&lt;/h4&gt;
+
+&lt;p&gt;導覽列上目前頁面的連結, 總是要顯示出跟其他連結不同的樣式, 像是要在 class 上加上 current, 來做出特別的效果, 搭配 helper 你再也不用一頁一頁修改, 現在是哪個連結是當前頁面的連結了&lt;/p&gt;
+
+&lt;p&gt;要插入一段沒有意義文字, 讓版面看起來比較像真的網站. 過去可以使用 &lt;a href=&#34;http://more.handlino.com/&#34;&gt;MoreText&lt;/a&gt; 用 javascript 插入假文, 現在可以讓 helper 直接把 MoreText 的假文插入網頁裡, 開發更加方便！
+&amp;lt;!&amp;ndash; more &amp;ndash;&amp;gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;可以使用-ruby-語法:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以使用 Ruby 語法&lt;/h4&gt;
+
+&lt;p&gt;如果願意的話, 還可學一點 Ruby 程式語言的語法, 如此再寫網頁時便可以快速的完成工作, 例如要列出 10 筆文章的標題只要像下面這樣寫就可以了&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  &amp;lt;ul&amp;gt;
+    &amp;lt;% (1..10).each do |x|%&amp;gt;
+      &amp;lt;li&amp;gt;文章&amp;lt;%=x%&amp;gt; 標題&amp;lt;/li&amp;gt;
+    &amp;lt;% end %&amp;gt;
+  &amp;lt;/ul&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;就會得到下面的html&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;ul&amp;gt;
+  &amp;lt;li&amp;gt;文章 1 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 2 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 3 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 4 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 5 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 6 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 7 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 8 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 9 標題&amp;lt;/li&amp;gt;
+  &amp;lt;li&amp;gt;文章 10 標題&amp;lt;/li&amp;gt;
+&amp;lt;/ul&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;樣板語法相關資料:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;樣板語法相關資料&lt;/h3&gt;
+
+&lt;p&gt;接下來只會提到在 Compass.app 環境中使用 ERB 或是 Haml 的使用方式, 而這兩種樣板語言的語法將不會被提到, 所以建議先參考下列幾個網址先學會 ERB 跟 Haml 的語法&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ERB
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html&#34;&gt;http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://rrn.dk/rubys-erb-templating-system&#34;&gt;http://rrn.dk/rubys-erb-templating-system&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.stuartellis.eu/articles/erb/&#34;&gt;http://www.stuartellis.eu/articles/erb/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Haml
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://haml-lang.com/&#34;&gt;http://haml-lang.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.meituo.net/2011/03/27/haml-%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/&#34;&gt;http://blog.meituo.net/2011/03/27/haml-%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;搭配-compass-app-使用方式:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;搭配 Compass.app 使用方式&lt;/h3&gt;
+
+&lt;h4 id=&#34;建立頁面:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;建立頁面&lt;/h4&gt;
+
+&lt;p&gt;把檔案放在  專案目錄下, 檔名用 &lt;code&gt;.html.erb&lt;/code&gt; 結尾的會使用 ERB 樣板語言, 用 &lt;code&gt;.html.haml&lt;/code&gt; 結為尾的會使用 Haml 樣板語言處理, 而對對應的網址就是 &lt;code&gt;http://127.0.0.1:24680/ + 檔名&lt;/code&gt; 去掉結尾的 &lt;code&gt;.erb&lt;/code&gt; 或 &lt;code&gt;.haml&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;例如:
+  專案目錄下面建立一個檔案, 命名為 &lt;code&gt;home.html.erb&lt;/code&gt;, 寫入一些內容. 然後從瀏覽器中開啟 &lt;code&gt;http://127.0.0.1:24680/home.html&lt;/code&gt; 就可以看到剛剛建立的網頁了. 同理如果是放在 Compass 專案目錄下面的 &lt;code&gt;about&lt;/code&gt; 目錄的 &lt;code&gt;company.html.erb&lt;/code&gt; 跟 &lt;code&gt;contact.html.haml&lt;/code&gt;, 網址就會是 &lt;code&gt;http://127.0.0.1:24680/about/company.html&lt;/code&gt; 跟 &lt;code&gt;http://127.0.0.1:24680/about/contact.html&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;套用-layout:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 layout&lt;/h4&gt;
+
+&lt;p&gt;頁面有兩種方法可以套用 layout&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;指定頁面 layout 檔案&lt;/li&gt;
+&lt;li&gt;頁面同目錄或是上層目錄有 _layout.html.erb&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5 id=&#34;頁面同目錄或是上層目錄有-layout-html-erb:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;頁面同目錄或是上層目錄有 _layout.html.erb&lt;/h5&gt;
+
+&lt;p&gt;如果頁面沒有指定目錄, 而且頁面所在目錄或是上層目錄中有檔案被命名為&lt;code&gt;_layout.html.erb&lt;/code&gt;, 就會使用該檔案作為 layout 檔案 ._&lt;/p&gt;
+
+&lt;p&gt;例如:
+有 &lt;code&gt;/_layout.html.erb&lt;/code&gt; 存在且 &lt;code&gt;/about/_layout.html.erb&lt;/code&gt; 不存在, 那 &lt;code&gt;/about/me.html.erb&lt;/code&gt; 跟 &lt;code&gt;/about/contact.html.erb&lt;/code&gt; 都會用 &lt;code&gt;/_layout.html.erb&lt;/code&gt; 當作 layout 檔案&lt;/p&gt;
+
+&lt;h5 id=&#34;指定頁面-layout-檔案:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;指定頁面 layout 檔案&lt;/h5&gt;
+
+&lt;p&gt;建立一個新檔案, 命名方式是將頁面檔案的檔名結尾從 &lt;code&gt;.html.erb&lt;/code&gt; 或是 &lt;code&gt;.html.haml&lt;/code&gt; 改成 &lt;code&gt;.html.layout&lt;/code&gt;, 同時在該檔案裏面指定要當作 layout 的檔案名增&lt;/p&gt;
+
+&lt;p&gt;例如:
+&lt;code&gt;/about/me.html.erb&lt;/code&gt; 要指定使用 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt; 當作 layout 檔案, 就要建立新檔案並且命名為 &lt;code&gt;/about/me.html.layout&lt;/code&gt;, 然後在 &lt;code&gt;/about/me.html.layout&lt;/code&gt; 裏面寫 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt;, 這樣就會使用 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt; 來當作 layout 檔案而不是 &lt;code&gt;_layout.html.erb&lt;/code&gt; 了&lt;/p&gt;
+
+&lt;p&gt;layout 檔案內容會長的像是下面的樣子, 其中 &lt;code&gt;&amp;lt;%= yield%&amp;gt;&lt;/code&gt; 位置就是頁面會被載入的地方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;!--[if lt IE 7]&amp;gt; &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie6 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
+&amp;lt;!--[if IE 7]&amp;gt;    &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie7 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
+&amp;lt;!--[if IE 8]&amp;gt;    &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie8 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
+&amp;lt;!--[if gt IE 8]&amp;gt;&amp;lt;!--&amp;gt;
+  &amp;lt;html class=&#39;no-js&#39; lang=&#39;en&#39;&amp;gt;
+    &amp;lt;!--&amp;lt;![endif]--&amp;gt;
+    &amp;lt;head&amp;gt;
+        &amp;lt;meta charset=&#39;utf-8&#39; /&amp;gt;
+        &amp;lt;meta content=&#39;IE=edge,chrome=1&#39; http-equiv=&#39;X-UA-Compatible&#39; /&amp;gt;
+        &amp;lt;title&amp;gt;Site Title&amp;lt;/title&amp;gt;
+        &amp;lt;meta content=&#39;&#39; name=&#39;description&#39; /&amp;gt;
+        &amp;lt;meta content=&#39;&#39; name=&#39;author&#39; /&amp;gt;
+        &amp;lt;meta content=&#39;width=device-width, initial-scale=1.0&#39; name=&#39;viewport&#39; /&amp;gt;
+        &amp;lt;link href=&#39;http://blog.tka.lu/stylesheets/style.css&amp;quot;%&amp;gt;&#39; rel=&#39;stylesheet&#39; /&amp;gt;
+        &amp;lt;script src=&#39;http://blog.tka.lu/javascripts/modernizr-2.5.3.js&#39;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;/head&amp;gt;
+    &amp;lt;body&amp;gt;
+        &amp;lt;div id=&#39;container&#39;&amp;gt;
+            &amp;lt;header&amp;gt;&amp;lt;/header&amp;gt;
+            &amp;lt;div id=&#39;main&#39; role=&#39;main&#39;&amp;gt;
+                &amp;lt;%= yield%&amp;gt;
+            &amp;lt;/div&amp;gt;
+
+            &amp;lt;div id=&amp;quot;root-footer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+        &amp;lt;/div&amp;gt;
+        &amp;lt;div id=&amp;quot;footer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+    &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;套用-partial:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 partial&lt;/h3&gt;
+
+&lt;p&gt;partial 是只網頁片段內容, 只要在建立檔案時用底線&lt;code&gt;_&lt;/code&gt;開頭就可以當作 partial 呼叫, ex. &lt;code&gt;_top_nav.html.erb&lt;/code&gt;
+呼叫的時候只需要在頁面裏面寫 &lt;code&gt;&amp;lt;%= render(&amp;quot;top_nav&amp;quot;)%&amp;gt;&lt;/code&gt;就可以了, 這邊不需要&lt;code&gt;_&lt;/code&gt;跟&lt;code&gt;.html.erb&lt;/code&gt;歐, 不管是頁面, layout 還是 partial 都可以使用 partial 來載入常用的內容&lt;/p&gt;
+
+&lt;h3 id=&#34;套用-helper:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 helper&lt;/h3&gt;
+
+&lt;p&gt;編寫頁面時可以透過 &lt;code&gt;&amp;lt;%= helper名稱(helper參數1, helper參數2..)%&amp;gt;&lt;/code&gt; 的方式來呼叫 helper, 所以其實套用 partial 時也是透過呼叫叫作 &lt;code&gt;render&lt;/code&gt; 的 helper 來達成載入 partial 檔案內容的工作&lt;/p&gt;
+
+&lt;p&gt;目前 Compass.app 內建的 helper 可以參考 &lt;a href=&#34;http://get-serve.com/documentation/view-helpers&#34;&gt;Serve View Helpers&lt;/a&gt;, 如果要定義自己的 helper, 需要 Ruby 語言的基礎, 方法是在 Compass 專案目錄中建立 &lt;code&gt;view_helpers.rb&lt;/code&gt;　內容如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;module ViewHelpers
+  def helper_name(arg1, arg2, ....)
+      return &amp;quot;something&amp;quot;
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果要做到前面提到的當前頁面標示跟載入 MoreText 可以下載&lt;a href=&#34;https://gist.github.com/970ce5226b95e2ec52dd&#34;&gt;檔案&lt;/a&gt;放到  專案目錄中, 如此 link_to helper 會在當前網頁路徑(ex. &lt;code&gt;/about/me.html&lt;/code&gt;)相同的連結中加上 &lt;code&gt;class=&amp;quot;current&amp;quot;&lt;/code&gt;, moretext  helper 則可插入 MoreText 資料&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>在 windows7 中使用 middleman</title>
+      <link>http://blog.tka.lu/post/2012-01-23-zai-windows7-zhong-shi-yong-middleman/</link>
+      <pubDate>Mon, 23 Jan 2012 03:58:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-01-23-zai-windows7-zhong-shi-yong-middleman/</guid>
+      <description>
+
+&lt;h2 id=&#34;步驟:88c3ba1f1eeafa3975c5177d411aafca&#34;&gt;步驟&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;下載 RubyInstaller 與 Devkit
+
+&lt;ul&gt;
+&lt;li&gt;到 &lt;a href=&#34;http://rubyinstaller.org/downloads/&#34;&gt;http://rubyinstaller.org/downloads/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;下載 Ruby 1.9.3-p0 &lt;a href=&#34;http://rubyforge.org/frs/download.php/75465/rubyinstaller-1.9.3-p0.exe&#34;&gt;http://rubyforge.org/frs/download.php/75465/rubyinstaller-1.9.3-p0.exe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;下載 Devkit &lt;a href=&#34;https://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe&#34;&gt;https://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;安裝 RubyInstaller
+
+&lt;ul&gt;
+&lt;li&gt;安裝過程勾選
+
+&lt;ol&gt;
+&lt;li&gt;Add Ruby executables to your Path&lt;/li&gt;
+&lt;li&gt;Associate .rb and .rbw files with thus ruby installation&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;解開 Devkit
+
+&lt;ul&gt;
+&lt;li&gt;點選下載回來的 DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe 便可解開到特定目錄中&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;安裝 middleman
+
+&lt;ul&gt;
+&lt;li&gt;在剛剛解開的 Devkit 目錄中點選 msys 批次檔案&lt;/li&gt;
+&lt;li&gt;在彈出的視窗中輸入 &lt;code&gt;gem install middleman&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;啟動 PowerShell 即可使用 middleman, 指令請參考 &lt;a href=&#34;http://middlemanapp.com&#34;&gt;http://middlemanapp.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>&#39;blog 改用 octopress&#39;</title>
+      <link>http://blog.tka.lu/post/2012-01-04-blog-gai-yong-octopress/</link>
+      <pubDate>Wed, 04 Jan 2012 20:04:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-01-04-blog-gai-yong-octopress/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
