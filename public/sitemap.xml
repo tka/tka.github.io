@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://blog.tka.lu/</loc>
+    <lastmod>2013-08-26T23:33:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2013-08-26-archlinux-zi-xing-she-ding/</loc>
+    <lastmod>2013-08-26T23:33:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2013-08-24-cong-windows8-iso-dang-jian-li-an-zhuang-sui-shen-die/</loc>
+    <lastmod>2013-08-24T00:13:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2013-08-21-she-ding-yardhuan-jing/</loc>
+    <lastmod>2013-08-21T03:13:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2013-08-10-ruby-tuesday-25-fen-xiang/</loc>
+    <lastmod>2013-08-10T15:55:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-10-14-jian-li-mahout-huan-jing/</loc>
+    <lastmod>2012-10-14T11:22:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-08-24-java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/</loc>
+    <lastmod>2012-08-24T22:16:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-08-13-rack-auth-ji-qiao/</loc>
+    <lastmod>2012-08-13T12:58:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-08-07-2012-javatwo/</loc>
+    <lastmod>2012-08-07T22:39:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-04-16-jiang-rails-zhuan-an-zhong-ji-you-de-mysql-zi-liao-zhuan-yi-dao-postgresql/</loc>
+    <lastmod>2012-04-16T15:13:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-2/</loc>
+    <lastmod>2012-02-26T04:16:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-02-22-elasticsearchru-men-bi-ji-1/</loc>
+    <lastmod>2012-02-25T16:08:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-02-20-zai-compassappzhong-shi-yong-erb-slash-hamlyang-ban/</loc>
+    <lastmod>2012-02-20T22:02:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-01-23-zai-windows7-zhong-shi-yong-middleman/</loc>
+    <lastmod>2012-01-23T03:58:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.tka.lu/post/2012-01-04-blog-gai-yong-octopress/</loc>
+    <lastmod>2012-01-04T20:04:00+08:00</lastmod>
+  </url>
+  
+</urlset>

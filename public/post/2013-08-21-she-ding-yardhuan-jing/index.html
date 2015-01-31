@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 設定YARD環境 &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu/css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>設定YARD環境</h1>
+  <span class="post-date">Wed, Aug 21, 2013</span>
+      <p>添加專案中的 <code>Gemfile</code> 與 <code>.yardopts</code> 如下</p>
+
+<p>Gemfile</p>
+
+<pre><code class="language-ruby">group :development do
+  gem 'guard'
+  gem 'guard-yard'
+  gem 'redcarpet'
+  gem 'github-markup'
+end
+</code></pre>
+
+<p>.yardopts</p>
+
+<pre><code class="language-ruby">--markup-provider=redcarpet
+--markup=markdown
+</code></pre>
+
+<p>接下來執行 <code>guard init yard</code> 初始化 guard 的環境,
+之後只需要執行 <code>guard start</code> 便可監控檔案異動, 立刻透過 YARD 產生文件</p>
+
+</div>
+</div>
+
+  </body>
+</html>
