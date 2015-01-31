@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> Mahout 搭配 JRuby 建立環境與簡單測試 &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu/css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>Mahout 搭配 JRuby 建立環境與簡單測試</h1>
+  <span class="post-date">Sun, Oct 14, 2012</span>
+      
+
+<h1 id="建立環境:39c51cddf9d8befaa56d8c9c678b90e8">建立環境</h1>
+
+<ol>
+<li>下載&amp;安裝 Mahout
+
+<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout">https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout</a></li>
+</ul></li>
+<li>下載&amp;安裝 Hadoop
+
+<ul>
+<li><a href="http://www.apache.org/dyn/closer.cgi/hadoop/common/">http://www.apache.org/dyn/closer.cgi/hadoop/common/</a></li>
+<li>單機安裝步驟 <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">http://hadoop.apache.org/common/docs/stable/single_node_setup.html</a></li>
+</ul></li>
+<li>設定 ClASSPATH</li>
+</ol>
+
+<pre><code> export CLASSPATH=.:~/Project/Mahout/mahout-distribution-0.7/mahout-core-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/mahout-math-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/lib/'*'
+</code></pre>
+
+<h1 id="簡單測試:39c51cddf9d8befaa56d8c9c678b90e8">簡單測試</h1>
+
+<p>可以從 <a href="https://github.com/tdunning/MiA">https://github.com/tdunning/MiA</a> 下載 Mahout in Action 的範例程式, 這邊選擇第2章的 <a href="https://github.com/tdunning/MiA/blob/mahout-0.7/src/main/java/mia/recommender/ch02/RecommenderIntro.java">RecommenderIntro.java</a> 來將他改寫為 JRuby 的版本, 改寫的結果如下</p>
+
+<pre><code class="language-ruby">require 'java'
+
+module Mahout
+  include_package &quot;org.apache.mahout.cf.taste.impl.model.file&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.impl.neighborhood&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.impl.recommender&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.impl.similarity&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.model&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.neighborhood&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.recommender&quot;;
+  include_package &quot;org.apache.mahout.cf.taste.similarity&quot;;
+
+end
+
+model = Mahout::FileDataModel.new( java.io.File.new(&quot;intro.csv&quot;));
+
+similarity = Mahout::PearsonCorrelationSimilarity.new(model);
+neighborhood = Mahout::NearestNUserNeighborhood.new(2, similarity, model);
+
+recommender = Mahout::GenericUserBasedRecommender.new( model, neighborhood, similarity);
+
+recommendation =recommender.recommend(1, 1);
+
+puts recommendation
+
+</code></pre>
+
+</div>
+</div>
+
+  </body>
+</html>
