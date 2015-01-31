@@ -1,0 +1,923 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>tka's blog</title>
+	<meta name="author" content="tka">
+
+	
+	<meta name="description" content="把 https://hackpad.com/g0v.tw&#8211;0M0HW9tSVNQ 裡面 201201~201307JSON 格式資料抽了12萬筆丟進新的 pg 新的 JSON 格式欄位裡面測試 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+pg_conn.exec(&#39; &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="tka's blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script async="true" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">tka's blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:tka.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+    
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:tka.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/09/12/postgresql-9-dot-3-json-type-first-impression/">
+		
+			PostgreSQL 9.3 JSON Type First Impression</a>
+	</h2>
+	<div class="entry-content">
+		<p>把 <a href="https://hackpad.com/g0v.tw--0M0HW9tSVNQ">https://hackpad.com/g0v.tw&#8211;0M0HW9tSVNQ</a> 裡面 201201~201307JSON 格式資料抽了12萬筆丟進新的 pg 新的 JSON 格式欄位裡面測試</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pg_conn</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS tenders (id varchar(128) PRIMARY KEY, data json)&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pg_conn</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span> <span class="s1">&#39;insert_tender&#39;</span><span class="p">,</span> <span class="s2">&quot;INSERT INTO tenders VALUES ($1, $2);&quot;</span> <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Benchmark</span><span class="o">.</span><span class="n">bm</span> <span class="k">do</span> <span class="o">|</span><span class="n">benchmark</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">benchmark</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="s2">&quot;insert json&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>    <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;tenders-json/**/*.json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+</span><span class='line'>      <span class="nb">id</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">json</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">){</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">}</span>
+</span><span class='line'>      <span class="n">conn</span><span class="o">.</span><span class="n">exec_prepared</span><span class="p">(</span> <span class="s1">&#39;insert_tender&#39;</span><span class="p">,</span> <span class="o">[</span><span class="nb">id</span><span class="p">,</span> <span class="n">json</span><span class="o">]</span> <span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>簡單效能測試結果是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">g0v_pcc</span><span class="o">=</span><span class="c1"># \d tenders;</span>
+</span><span class='line'> <span class="nb">id</span>   <span class="o">|</span> <span class="n">character</span> <span class="n">varying</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span> <span class="o">|</span> <span class="err">非</span> <span class="no">Null</span>
+</span><span class='line'> <span class="n">data</span> <span class="o">|</span> <span class="n">json</span>                   <span class="o">|</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">g0v_pcc</span><span class="o">=</span><span class="c1"># select count(*) from tenders;</span>
+</span><span class='line'> <span class="mi">122788</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">時間</span><span class="p">:</span> <span class="mi">51</span><span class="o">.</span><span class="mi">111</span> <span class="n">ms</span>
+</span><span class='line'><span class="n">g0v_pcc</span><span class="o">=</span><span class="c1">#  select count(*) from tenders where data#&gt;&gt;&#39;{機關資料,機關名稱}&#39; = &#39;國防部&#39;;</span>
+</span><span class='line'>   <span class="mi">318</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">時間</span><span class="p">:</span> <span class="mi">5149</span><span class="o">.</span><span class="mi">975</span> <span class="n">ms</span>
+</span><span class='line'><span class="n">g0v_pcc</span><span class="o">=</span><span class="c1"># select count(*) from tenders where data::text like &#39;%國防部%&#39;;</span>
+</span><span class='line'>  <span class="mi">5023</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">時間</span><span class="p">:</span> <span class="mi">2532</span><span class="o">.</span><span class="mi">225</span> <span class="n">ms</span>
+</span><span class='line'><span class="n">g0v_pcc</span><span class="o">=</span><span class="c1">#  select * from tenders where data#&gt;&gt;&#39;{機關資料,機關名稱}&#39; = &#39;國防部&#39; limit 1;</span>
+</span><span class='line'><span class="err">時間</span><span class="p">:</span> <span class="mi">7</span><span class="o">.</span><span class="mi">188</span> <span class="n">ms</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-12T13:51:00+08:00" pubdate data-updated="true">Sep 12<span>th</span>, 2013</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/08/26/archlinux-zi-xing-she-ding/">
+		
+			Arch Linux 字型設定</a>
+	</h2>
+	<div class="entry-content">
+		<p>用了好一陣子的 Arch Linux 搭 KDE, 最近裝新機器時又覺得字型怎麼調都不對, 之前都是採用 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Ubuntu">Ubuntu 的字型解決方案</a> 不過這次怎麼調都不順眼, 乾脆改用 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Infinality">Infinality 的方案</a>,
+直接安裝打包好的整包套件 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Install_from_custom_repository">infinality-bundle</a>.
+然後在 <code>~/.config/fontconfig/fonts.conf</code> 裡面加入習慣的字型順序, 像是</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;serif&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Serif&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;
+</span><span class='line'>
+</span><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;sans-serif&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Sans&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;
+</span><span class='line'>
+</span><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;monospace&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Sans Mono&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基本上效果還不錯, 應該會先用一陣子, 哪天不順眼了再調整</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-26T23:33:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2013</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/desktop/'>desktop</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/08/24/cong-windows8-iso-dang-jian-li-an-zhuang-sui-shen-die/">
+		
+			從 Windows8 Iso 檔建立安裝隨身碟</a>
+	</h2>
+	<div class="entry-content">
+		<p>步驟大致上是</p>
+
+<ul>
+<li>挑隻4G以上的隨身碟</li>
+<li>把隨身碟格式化成 NTFS 格式</li>
+<li>sudo mount -o loop windows8.iso /mnt/win_iso</li>
+<li>cp -R /mnt/win_iso/* usb_disk</li>
+<li>sudo sync</li>
+<li>sudo ms-sys -7 /dev/usb_disk</li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-24T00:13:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2013</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/08/21/she-ding-yardhuan-jing/">
+		
+			設定YARD環境</a>
+	</h2>
+	<div class="entry-content">
+		<p>添加專案中的 <code>Gemfile</code> 與 <code>.yardopts</code> 如下</p>
+
+<p>Gemfile</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">group</span> <span class="ss">:development</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s1">&#39;guard&#39;</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s1">&#39;guard-yard&#39;</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s1">&#39;redcarpet&#39;</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s1">&#39;github-markup&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.yardopts</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">--</span><span class="n">markup</span><span class="o">-</span><span class="n">provider</span><span class="o">=</span><span class="n">redcarpet</span>
+</span><span class='line'><span class="o">--</span><span class="n">markup</span><span class="o">=</span><span class="n">markdown</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接下來執行 <code>guard init yard</code> 初始化 guard 的環境,
+之後只需要執行 <code>guard start</code> 便可監控檔案異動, 立刻透過 YARD 產生文件</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-21T03:13:00+08:00" pubdate data-updated="true">Aug 21<span>st</span>, 2013</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/08/10/ruby-tuesday-25-fen-xiang/">
+		
+			Ruby-tuesday-25-分享</a>
+	</h2>
+	<div class="entry-content">
+		<p>上個月底在 Tuby Tuesday 25 分享了, 利用 ruby library 實作 Collaborative Filtering 推薦系統的心得</p>
+
+<p>投影片如下</p>
+
+<script async class="speakerdeck-embed" data-id="4f5346c0db6301305e137a9184b31ee5" data-ratio="1.33507170795306" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-10T15:55:00+08:00" pubdate data-updated="true">Aug 10<span>th</span>, 2013</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/10/14/jian-li-mahout-huan-jing/">
+		
+			Mahout 搭配 JRuby 建立環境與簡單測試</a>
+	</h2>
+	<div class="entry-content">
+		<h1>建立環境</h1>
+
+<ol>
+<li>下載&amp;安裝 Mahout
+
+<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout">https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout</a></li>
+</ul>
+</li>
+<li>下載&amp;安裝 Hadoop
+
+<ul>
+<li><a href="http://www.apache.org/dyn/closer.cgi/hadoop/common/">http://www.apache.org/dyn/closer.cgi/hadoop/common/</a></li>
+<li>單機安裝步驟 <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">http://hadoop.apache.org/common/docs/stable/single_node_setup.html</a></li>
+</ul>
+</li>
+<li>設定 ClASSPATH</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> export CLASSPATH=.:~/Project/Mahout/mahout-distribution-0.7/mahout-core-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/mahout-math-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/lib/'*'</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>簡單測試</h1>
+
+<p>可以從 <a href="https://github.com/tdunning/MiA">https://github.com/tdunning/MiA</a> 下載 Mahout in Action 的範例程式, 這邊選擇第2章的 <a href="https://github.com/tdunning/MiA/blob/mahout-0.7/src/main/java/mia/recommender/ch02/RecommenderIntro.java">RecommenderIntro.java</a> 來將他改寫為 JRuby 的版本, 改寫的結果如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;java&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">module</span> <span class="nn">Mahout</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.model.file&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.neighborhood&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.recommender&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.similarity&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.model&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.neighborhood&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.recommender&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.similarity&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">model</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:FileDataModel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;intro.csv&quot;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">similarity</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:PearsonCorrelationSimilarity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+</span><span class='line'><span class="n">neighborhood</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:NearestNUserNeighborhood</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">similarity</span><span class="p">,</span> <span class="n">model</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">recommender</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:GenericUserBasedRecommender</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="n">model</span><span class="p">,</span> <span class="n">neighborhood</span><span class="p">,</span> <span class="n">similarity</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">recommendation</span> <span class="o">=</span><span class="n">recommender</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="n">recommendation</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-14T11:22:00+08:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/08/24/java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/">
+		
+			Java7 + JRuby 1.7.0.preview2 + Rawr</a>
+	</h2>
+	<div class="entry-content">
+		<p>這兩天試著把 <a href="http://fireapp.handlino.com/">Fire.app</a> 升級到 <a href="http://jruby.org/">JRuby</a> 1.7.0.preview2, 過程中遇到一些 ruby 1.8.7 升級到 1.9.3 的小問題, 不過解決起來還算順手。後來同事想試試看搭配 Java7 的效果如何這時候就遇到問題了。</p>
+
+<p>原因在於之前打包是使用 <a href="https://github.com/rawr/rawr">Rawr</a>, 但是他使用的 <a href="http://launch4j.sourceforge.net/">launch4j</a> 在 OS X 上面搭配 Java7 打包出來的程式無法順利執行。 看起來是因為　Java7 不是 apple 放出來的版本造成的。所以必須要改用 <a href="http://java.net/projects/appbundler">Java Application Bundler</a>, 這邊最簡單的方法就是一樣用 Rawr 建立 jar 檔, 然後改寫　rawr:bundle:app 這個 rake task 就好了。</p>
+
+<p>主要需要處理的部份有</p>
+
+<ol>
+<li>移動程式目錄裡面的 <code>Contents/Resources/Java</code> 到 <code>Contents/Java</code></li>
+<li>複製 Java Application Bundler 專案中的 <code>JavaAppLauncher</code> 這個檔案到 <code>Contents/MacOS</code> 目錄下</li>
+<li>改寫 <code>Contents/Info.plist</code> 的部份內容如下, 這邊的細節可以參考 Java Application Bundler 的文件跟 source</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;key&gt;</span>CFBundleExecutable<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;string&gt;</span>JavaAppLauncher<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>JVMMainClassName<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;string&gt;</span>com.handlino.fireapp.Main<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>JVMOptions<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;array&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;key&gt;</span>-XstartOnFirstThread<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;/array&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>做好這些步驟之後, 就可以像過去一樣輕鬆的打包出各個平台使用 Java7 + JRuby 1.7.0.preview2 程式</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-24T22:16:00+08:00" pubdate data-updated="true">Aug 24<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fireapp/'>fireapp</a>, <a class='category' href='/blog/categories/jruby/'>jruby</a>
+
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/08/13/rack-auth-ji-qiao/">
+		
+			Rack 技巧</a>
+	</h2>
+	<div class="entry-content">
+		<p>最近比較常發佈基於 serve 的 rack app 到 heroku 上面, 通常是網站的 prototype.</p>
+
+<p>常常因為網站不公開, 所以需要特定的人才看的到.</p>
+
+<p>這時候只需要加一下 rack middleware 就可以達到這個需求</p>
+
+<h3>使用 Rack::Auth::Basic</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Auth</span><span class="o">::</span><span class="no">Basic</span><span class="p">,</span> <span class="s2">&quot;Snack cabinet&quot;</span> <span class="k">do</span> <span class="o">|</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">username</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">password</span> <span class="o">==</span> <span class="s1">&#39;foobar&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>使用 Warden</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;warden&quot;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">FailLoginApp</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span> <span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span> <span class="p">},</span> <span class="o">[&lt;&lt;</span><span class="no">EOL</span>
+</span><span class='line'><span class="sh">      &lt;html&gt;</span>
+</span><span class='line'><span class="sh">      &lt;body&gt;</span>
+</span><span class='line'><span class="sh">      &lt;h1&gt;Login&lt;/h1&gt;</span>
+</span><span class='line'><span class="sh">      &lt;form action=&quot;/&quot; method=&quot;post&quot;&gt;</span>
+</span><span class='line'><span class="sh">    username:&lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sh">    password:&lt;input type=&quot;password&quot; name=&quot;password&quot;&gt;</span>
+</span><span class='line'><span class="sh">    &lt;input type=&quot;submit&quot;&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/form&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/body&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/html&gt;</span>
+</span><span class='line'><span class="no">EOL</span>
+</span><span class='line'>    <span class="o">]]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CheckLogin</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>    <span class="vi">@app</span><span class="o">=</span><span class="n">app</span>
+</span><span class='line'>    <span class="vi">@opts</span><span class="o">=</span><span class="n">opts</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Request</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">env</span><span class="o">[</span><span class="s1">&#39;warden&#39;</span><span class="o">].</span><span class="n">logout</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="o">[</span><span class="s2">&quot;logout&quot;</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">env</span><span class="o">[</span><span class="s1">&#39;warden&#39;</span><span class="o">].</span><span class="n">authenticate!</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="ss">Warden</span><span class="p">:</span><span class="ss">:Strategies</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">valid?</span>
+</span><span class='line'>    <span class="n">params</span><span class="o">[</span><span class="s2">&quot;username&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;password&quot;</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">authenticate!</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;username&quot;</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;admin&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;password&quot;</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;foobar&quot;</span>
+</span><span class='line'>      <span class="n">success!</span><span class="p">({})</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="nb">fail</span><span class="o">!</span><span class="p">(</span><span class="s2">&quot;Could not log in&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Session</span><span class="o">::</span><span class="no">Cookie</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="ss">Warden</span><span class="p">:</span><span class="ss">:Manager</span> <span class="k">do</span> <span class="o">|</span><span class="n">manager</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">manager</span><span class="o">.</span><span class="n">default_strategies</span> <span class="ss">:password</span>
+</span><span class='line'>  <span class="n">manager</span><span class="o">.</span><span class="n">failure_app</span> <span class="o">=</span> <span class="no">FailLoginApp</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="no">CheckLogin</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T12:58:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/08/07/2012-javatwo/">
+		
+			2012 JavaTwo</a>
+	</h2>
+	<div class="entry-content">
+		<p>今年 7月 20 日很幸運的有機會在 JavaTwo 大會上跟 @weijen 合講了一個關於 JRuby 的 session</p>
+
+<p>我的部份投影片如下</p>
+
+<script async class="speakerdeck-embed" data-id="5021266316e890000205c801" data-ratio="1.3333333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-07T22:39:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/jruby/'>jruby</a>
+
+
+</div>
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/04/16/jiang-rails-zhuan-an-zhong-ji-you-de-mysql-zi-liao-zhuan-yi-dao-postgresql/">
+		
+			將 Rails 專案中使用的 MySQL 轉移到 PostgreSQL</a>
+	</h2>
+	<div class="entry-content">
+		<ol>
+<li>開一個新的 Rails 專案, DB 使用 PostgreSQL</li>
+<li>將舊專案中的 db/schema.rb 改寫成新專案中的 db migration</li>
+<li>在新專案中跑 <code>rake db:migrate</code> 建立 PostgreSQL 中的資料庫</li>
+<li>使用 <a href="https://github.com/maxlapshin/mysql2postgres">mysql2postgres</a> 做轉移</li>
+<li>因為 db schema 已經透過 Rails 機制完成轉移, 這邊轉移時只需要轉資料部份</li>
+</ol>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T15:13:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+<nav id="pagenavi">
+    
+    
+        <a href="/blog/page/2/" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    tka
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>

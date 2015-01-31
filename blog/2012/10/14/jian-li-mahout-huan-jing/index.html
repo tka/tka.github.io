@@ -1,0 +1,213 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mahout 搭配 JRuby 建立環境與簡單測試 - tka's blog</title>
+	<meta name="author" content="tka">
+
+	
+	<meta name="description" content="建立環境 下載&amp;安裝 Mahout https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout 下載&amp;安裝 Hadoop http://www.apache.org/dyn/closer.cgi/hadoop/ &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="tka's blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script async="true" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">tka's blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:tka.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+    
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:tka.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Mahout 搭配 JRuby 建立環境與簡單測試</h2>
+	<div class="entry-content"><h1>建立環境</h1>
+
+<ol>
+<li>下載&amp;安裝 Mahout
+
+<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout">https://cwiki.apache.org/confluence/display/MAHOUT/BuildingMahout</a></li>
+</ul>
+</li>
+<li>下載&amp;安裝 Hadoop
+
+<ul>
+<li><a href="http://www.apache.org/dyn/closer.cgi/hadoop/common/">http://www.apache.org/dyn/closer.cgi/hadoop/common/</a></li>
+<li>單機安裝步驟 <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">http://hadoop.apache.org/common/docs/stable/single_node_setup.html</a></li>
+</ul>
+</li>
+<li>設定 ClASSPATH</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> export CLASSPATH=.:~/Project/Mahout/mahout-distribution-0.7/mahout-core-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/mahout-math-0.7.jar:~/Project/Mahout/mahout-distribution-0.7/lib/'*'</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>簡單測試</h1>
+
+<p>可以從 <a href="https://github.com/tdunning/MiA">https://github.com/tdunning/MiA</a> 下載 Mahout in Action 的範例程式, 這邊選擇第2章的 <a href="https://github.com/tdunning/MiA/blob/mahout-0.7/src/main/java/mia/recommender/ch02/RecommenderIntro.java">RecommenderIntro.java</a> 來將他改寫為 JRuby 的版本, 改寫的結果如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;java&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">module</span> <span class="nn">Mahout</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.model.file&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.neighborhood&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.recommender&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.impl.similarity&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.model&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.neighborhood&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.recommender&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">include_package</span> <span class="s2">&quot;org.apache.mahout.cf.taste.similarity&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">model</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:FileDataModel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;intro.csv&quot;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">similarity</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:PearsonCorrelationSimilarity</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+</span><span class='line'><span class="n">neighborhood</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:NearestNUserNeighborhood</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">similarity</span><span class="p">,</span> <span class="n">model</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">recommender</span> <span class="o">=</span> <span class="ss">Mahout</span><span class="p">:</span><span class="ss">:GenericUserBasedRecommender</span><span class="o">.</span><span class="n">new</span><span class="p">(</span> <span class="n">model</span><span class="p">,</span> <span class="n">neighborhood</span><span class="p">,</span> <span class="n">similarity</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">recommendation</span> <span class="o">=</span><span class="n">recommender</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="n">recommendation</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-14T11:22:00+08:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+		
+		
+		<a class="addthis_button_tweet"></a>
+		
+		
+		
+	</div>
+	
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    tka
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>
