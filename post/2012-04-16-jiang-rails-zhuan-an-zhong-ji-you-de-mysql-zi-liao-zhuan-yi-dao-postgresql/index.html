@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 將 Rails 專案中使用的 MySQL 轉移到 PostgreSQL &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu/css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>將 Rails 專案中使用的 MySQL 轉移到 PostgreSQL</h1>
+  <span class="post-date">Mon, Apr 16, 2012</span>
+      <ol>
+<li>開一個新的 Rails 專案, DB 使用 PostgreSQL</li>
+<li>將舊專案中的 db/schema.rb 改寫成新專案中的 db migration</li>
+<li>在新專案中跑 <code>rake db:migrate</code> 建立 PostgreSQL 中的資料庫</li>
+<li>使用 <a href="https://github.com/maxlapshin/mysql2postgres">mysql2postgres</a> 做轉移
+
+<ul>
+<li>因為 db schema 已經透過 Rails 機制完成轉移, 這邊轉移時只需要轉資料部份</li>
+</ul></li>
+</ol>
+
+</div>
+</div>
+
+  </body>
+</html>
