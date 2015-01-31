@@ -1,0 +1,194 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Arch Linux 字型設定 - tka's blog</title>
+	<meta name="author" content="tka">
+
+	
+	<meta name="description" content="用了好一陣子的 Arch Linux 搭 KDE, 最近裝新機器時又覺得字型怎麼調都不對, 之前都是採用 Ubuntu 的字型解決方案 不過這次怎麼調都不順眼, 乾脆改用 Infinality 的方案,
+直接安裝打包好的整包套件 infinality-bundle.
+然後在 ~/.config/ &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="tka's blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script async="true" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">tka's blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:tka.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+    
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:tka.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Arch Linux 字型設定</h2>
+	<div class="entry-content"><p>用了好一陣子的 Arch Linux 搭 KDE, 最近裝新機器時又覺得字型怎麼調都不對, 之前都是採用 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Ubuntu">Ubuntu 的字型解決方案</a> 不過這次怎麼調都不順眼, 乾脆改用 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Infinality">Infinality 的方案</a>,
+直接安裝打包好的整包套件 <a href="https://wiki.archlinux.org/index.php/Font_Configuration#Install_from_custom_repository">infinality-bundle</a>.
+然後在 <code>~/.config/fontconfig/fonts.conf</code> 裡面加入習慣的字型順序, 像是</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;serif&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Serif&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;
+</span><span class='line'>
+</span><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;sans-serif&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Sans&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;
+</span><span class='line'>
+</span><span class='line'>  &lt;alias binding="strong"&gt;
+</span><span class='line'>    &lt;family&gt;monospace&lt;/family&gt;
+</span><span class='line'>    &lt;prefer&gt;
+</span><span class='line'>      &lt;family&gt;DejaVu Sans Mono&lt;/family&gt;
+</span><span class='line'>      &lt;family&gt;Droid Sans Fallback&lt;/family&gt;
+</span><span class='line'>    &lt;/prefer&gt;
+</span><span class='line'>  &lt;/alias&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基本上效果還不錯, 應該會先用一陣子, 哪天不順眼了再調整</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-26T23:33:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2013</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/desktop/'>desktop</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+		
+		
+		<a class="addthis_button_tweet"></a>
+		
+		
+		
+	</div>
+	
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    tka
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>
