@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> Java7 &#43; JRuby 1.7.0.preview2 &#43; Rawr &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu/css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>Java7 &#43; JRuby 1.7.0.preview2 &#43; Rawr</h1>
+  <span class="post-date">Fri, Aug 24, 2012</span>
+      <p>這兩天試著把 <a href="http://fireapp.handlino.com/">Fire.app</a> 升級到 <a href="http://jruby.org/">JRuby</a> 1.7.0.preview2, 過程中遇到一些 ruby 1.8.7 升級到 1.9.3 的小問題, 不過解決起來還算順手。後來同事想試試看搭配 Java7 的效果如何這時候就遇到問題了。</p>
+
+<p>原因在於之前打包是使用 <a href="https://github.com/rawr/rawr">Rawr</a>, 但是他使用的 <a href="http://launch4j.sourceforge.net/">launch4j</a> 在 OS X 上面搭配 Java7 打包出來的程式無法順利執行。 看起來是因為　Java7 不是 apple 放出來的版本造成的。所以必須要改用 <a href="http://java.net/projects/appbundler">Java Application Bundler</a>, 這邊最簡單的方法就是一樣用 Rawr 建立 jar 檔, 然後改寫　rawr:bundle:app 這個 rake task 就好了。</p>
+
+<p>主要需要處理的部份有</p>
+
+<ol>
+<li>移動程式目錄裡面的 <code>Contents/Resources/Java</code> 到 <code>Contents/Java</code></li>
+<li>複製 Java Application Bundler 專案中的 <code>JavaAppLauncher</code> 這個檔案到 <code>Contents/MacOS</code> 目錄下</li>
+<li>改寫 <code>Contents/Info.plist</code> 的部份內容如下, 這邊的細節可以參考 Java Application Bundler 的文件跟 source</li>
+</ol>
+
+<pre><code class="language-xml">    &lt;key&gt;CFBundleExecutable&lt;/key&gt;
+    &lt;string&gt;JavaAppLauncher&lt;/string&gt;
+    &lt;key&gt;JVMMainClassName&lt;/key&gt;
+    &lt;string&gt;com.handlino.fireapp.Main&lt;/string&gt;
+    &lt;key&gt;JVMOptions&lt;/key&gt;
+    &lt;array&gt;
+      &lt;key&gt;-XstartOnFirstThread&lt;/key&gt; 
+    &lt;/array&gt;
+
+</code></pre>
+
+<p>做好這些步驟之後, 就可以像過去一樣輕鬆的打包出各個平台使用 Java7 + JRuby 1.7.0.preview2 程式</p>
+
+</div>
+</div>
+
+  </body>
+</html>
