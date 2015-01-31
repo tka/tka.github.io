@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>elasticsearch入門筆記(2) &middot; tka</title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde-x.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/highlight/sunburst.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link href="/favicon.png" rel="icon">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog &middot; tka" />
+
+  <meta name="description" content="tka&#39;s blog">
+  <meta name="keywords" content="ruby,golang,web,linux">
+  <link rel="author" href="http://plus.google.com/Your%20Google&#43;%20profile%20ID">
+</head>
+<body class="theme-base-00">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>tka</h1>
+      
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://localhost:1313/">Blog</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://github.com/tka">GitHub</a></li>
+      
+      
+      
+      <li class="sidebar-nav-item"><a href="https://twitter.com/tkalu">Twitter</a></li>
+    </ul>
+
+    <p>Copyright &copy; 2015 <a href="http://localhost:1313/license">License</a><br/>
+       Powered by <a href="http://hugo.spf13.com">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+<div class="content container">
+  <div class="post">
+    <h1>elasticsearch入門筆記(2)</h1>
+    
+
+<h2 id="field-種類:98c38dbcb71233e7f9b62c45085c2bbf">field 種類</h2>
+
+<p>來源: <a href="http://www.elasticsearch.org/guide/reference/mapping/core-types.html">http://www.elasticsearch.org/guide/reference/mapping/core-types.html</a></p>
+
+<p>主要的資料格式摘要如下, 其他還有不少種類的資料格式可用.
+其他詳細的內容需要參考, 該頁面右邊 Types 下面的分類(這裡的Types是指欄位的種類 )
+<table>
+  <tr>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>float, double, byte, short, integer, long</td>
+  </tr>
+  <tr>
+    <td>boolean</td>
+  </tr>
+  <tr>
+    <td>data</td>
+  </tr>
+  <tr>
+    <td>binary</td>
+  </tr>
+</table>
+&lt;!&ndash; more &ndash;&gt;</p>
+
+<h2 id="multi-field-欄位格式:98c38dbcb71233e7f9b62c45085c2bbf">multi_field 欄位格式</h2>
+
+<p>在許多field 種類中要特別提到的是multi_field, multi_field 可以做到的功能是u在建立 document 時, 將特定欄位給予多個 analyer(負責分詞的角色) 如此便可滿足中英文混雜的文章搜尋需求。</p>
+
+<p>例如 <code>elasticsearch遠比上Google搜尋更有效率</code> 需要在下列幾種輸入時都會被搜尋到</p>
+
+<ol>
+<li><code>elast</code>或是<code>elasticsearch</code>: 只輸入了單字的前幾個字, 或是完整單字</li>
+<li><code>更有效率</code> 中文句子</li>
+</ol>
+
+<p>這時候就可以將欄位設定成 multi_field, 並且設定兩個不同的分詞方式 <code>cjk</code> 與 <code>edgeNGram</code>, 其中 <code>cjk</code> 會對中文的內容用 <code>nGram</code> 進行切詞, 而 <code>edgeNGram</code> 則會建立 <code>e</code>, <code>el</code>, <code>ela</code>, <code>elas</code>, <code>elast</code>&hellip;. 的切詞</p>
+
+<p>另外要注意的事情是 multi_field 裏面建立的欄位並不包括在預設的搜尋欄位<code>_all</code>中, 必須要特別指定才會被搜尋到</p>
+
+  </div>
+</div>
+<script src="http://localhost:1313/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','Your Google Analytics tracking code'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>

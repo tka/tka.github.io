@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>elasticsearch入門筆記(1) &middot; tka</title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/hyde-x.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/highlight/sunburst.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link href="/favicon.png" rel="icon">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog &middot; tka" />
+
+  <meta name="description" content="tka&#39;s blog">
+  <meta name="keywords" content="ruby,golang,web,linux">
+  <link rel="author" href="http://plus.google.com/Your%20Google&#43;%20profile%20ID">
+</head>
+<body class="theme-base-00">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1>tka</h1>
+      
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://localhost:1313/">Blog</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://github.com/tka">GitHub</a></li>
+      
+      
+      
+      <li class="sidebar-nav-item"><a href="https://twitter.com/tkalu">Twitter</a></li>
+    </ul>
+
+    <p>Copyright &copy; 2015 <a href="http://localhost:1313/license">License</a><br/>
+       Powered by <a href="http://hugo.spf13.com">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+<div class="content container">
+  <div class="post">
+    <h1>elasticsearch入門筆記(1)</h1>
+    
+
+<h2 id="角色關係對照:74d1c7f17977e78f5dc1bb90e8606647">角色關係對照</h2>
+
+<p>elasticsearch 跟 MySQL 中定義資料格式的角色關係對照表如下</p>
+
+<table class="midden center">
+  <thead><tr><th>MySQL</th><th>elasticsearch</th></tr></thead>
+  <tbody>
+    <tr><td>database</td>     <td>index</td></tr>
+    <tr><td>table</td>        <td>type</td></tr>
+    <tr><td>table schema</td> <td>mapping</td></tr>
+    <tr><td>row</td>          <td>document</td></tr>
+    <tr><td>field</td>        <td>field</td></tr>
+  </tbody>
+</table>
+
+<!-- more -->
+
+<h2 id="設定檔與目錄配置:74d1c7f17977e78f5dc1bb90e8606647">設定檔與目錄配置</h2>
+
+<p>參考:</p>
+
+<ul>
+<li><a href="http://www.elasticsearch.org/guide/reference/setup/dir-layout.html">http://www.elasticsearch.org/guide/reference/setup/dir-layout.html</a></li>
+<li><a href="http://www.elasticsearch.org/guide/reference/setup/configuration.html">http://www.elasticsearch.org/guide/reference/setup/configuration.html</a></li>
+</ul>
+
+<h2 id="建立-index:74d1c7f17977e78f5dc1bb90e8606647">建立 index</h2>
+
+<p><code>curl -XPUT 'http://localhost:9200/my_index_name/'</code> 這邊的 <code>my_index_name</code> 就是要被建立的 index 的名字</p>
+
+<h2 id="設定-index:74d1c7f17977e78f5dc1bb90e8606647">設定 index</h2>
+
+<pre><code>curl -XPUT 'localhost:9200/my_index_name/_settings' -d '
+{
+    &quot;index&quot; : {
+        &quot;number_of_replicas&quot; : 4
+    }
+}
+'
+</code></pre>
+
+<p>可以設定的參數在 <a href="http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html">這頁</a></p>
+
+<h2 id="建立-type-與-mapping:74d1c7f17977e78f5dc1bb90e8606647">建立 type 與 mapping</h2>
+
+<p>在預設的情況下 elasticsearch 會自動建立 type 跟 mapping, 但是我會建議自行定義 mapping 的內容, 因為這樣可以做出比較符合需求的設定,例如不同的欄位要使用不同的分詞方式</p>
+
+<p>下面的範例中 <code>my_index_name</code>, <code>my_type_name</code>, <code>my_field_name</code> 都是自己命名的</p>
+
+<pre><code>curl -XPUT 'http://localhost:9200/my_index_name/my_type_name/_mapping' -d '
+{
+    &quot;my_type_name&quot; : {
+        &quot;properties&quot; : {
+            &quot;my_field_name&quot; : {&quot;type&quot; : &quot;string&quot;, &quot;store&quot; : &quot;yes&quot;},
+            &quot;my_field_name2&quot; : {&quot;type&quot; : &quot;string&quot;, &quot;store&quot; : &quot;yes&quot;},
+            &quot;my_field_name3&quot; : {&quot;type&quot; : &quot;date&quot;, &quot;store&quot; : &quot;yes&quot;}
+        }
+    }
+}
+'
+</code></pre>
+
+<p>每個欄位的定義, 會像是 <code>&quot;my_field_name&quot; : {&quot;type&quot; : &quot;string&quot;, &quot;store&quot; : &quot;yes&quot;}</code> 這樣子,
+常用的欄位格式定義可以參考<a href="http://www.elasticsearch.org/guide/reference/mapping/core-types.html">這頁</a></p>
+
+<h2 id="建立搜尋資料:74d1c7f17977e78f5dc1bb90e8606647">建立搜尋資料</h2>
+
+<pre><code>curl -XPOST 'localhost:9200/my_index_name/my_type_name/1' -d ' 
+{
+    &quot;my_field_name&quot; : &quot;test&quot;,
+    &quot;my_field_name2&quot;: &quot;test2&quot;,
+    &quot;my_fidle_name3&quot;: &quot;2012-02-1&quot;
+}
+'
+</code></pre>
+
+<p><code>my_index_name/my_type_name/1</code> 中的<code>1</code>代表的是這比資料的<code>id</code>, 建議寫入資料庫裏面的 primaty key, 如果沒有設定的話, 會自動產生像是<code>EYQqF6eyTJGJ-6aZiIYZsg</code>的內容</p>
+
+<h2 id="搜尋資料:74d1c7f17977e78f5dc1bb90e8606647">搜尋資料</h2>
+
+<pre><code>curl -XPOST 'localhost:9200/my_index_name/my_type_name/_search' -d '
+{ 
+    &quot;query&quot;:{ 
+        &quot;text&quot;:{ &quot;_all&quot;:&quot;test&quot;}
+    }
+}
+'
+</code></pre>
+
+<p>詳細搜尋的語法需參考<a href="http://www.elasticsearch.org/guide/reference/query-dsl/">這頁</a></p>
+
+  </div>
+</div>
+<script src="http://localhost:1313/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','Your Google Analytics tracking code'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
