@@ -1,0 +1,279 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>rack 技巧 - tka's blog</title>
+	<meta name="author" content="tka">
+
+	
+	<meta name="description" content="最近比較常發佈基於 serve 的 rack app 到 heroku 上面, 通常是網站的 prototype. 常常因為網站不公開, 所以需要特定的人才看的到. 這時候只需要加一下 rack middleware 就可以達到這個需求 使用 Rack::Auth::Basic 1
+2
+3
+use &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="tka's blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script async="true" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">tka's blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:tka.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+    
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:tka.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Rack 技巧</h2>
+	<div class="entry-content"><p>最近比較常發佈基於 serve 的 rack app 到 heroku 上面, 通常是網站的 prototype.</p>
+
+<p>常常因為網站不公開, 所以需要特定的人才看的到.</p>
+
+<p>這時候只需要加一下 rack middleware 就可以達到這個需求</p>
+
+<h3>使用 Rack::Auth::Basic</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Auth</span><span class="o">::</span><span class="no">Basic</span><span class="p">,</span> <span class="s2">&quot;Snack cabinet&quot;</span> <span class="k">do</span> <span class="o">|</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">username</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">password</span> <span class="o">==</span> <span class="s1">&#39;foobar&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>使用 Warden</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;warden&quot;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">FailLoginApp</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span> <span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span> <span class="p">},</span> <span class="o">[&lt;&lt;</span><span class="no">EOL</span>
+</span><span class='line'><span class="sh">      &lt;html&gt;</span>
+</span><span class='line'><span class="sh">      &lt;body&gt;</span>
+</span><span class='line'><span class="sh">      &lt;h1&gt;Login&lt;/h1&gt;</span>
+</span><span class='line'><span class="sh">      &lt;form action=&quot;/&quot; method=&quot;post&quot;&gt;</span>
+</span><span class='line'><span class="sh">    username:&lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sh">    password:&lt;input type=&quot;password&quot; name=&quot;password&quot;&gt;</span>
+</span><span class='line'><span class="sh">    &lt;input type=&quot;submit&quot;&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/form&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/body&gt;</span>
+</span><span class='line'><span class="sh">    &lt;/html&gt;</span>
+</span><span class='line'><span class="no">EOL</span>
+</span><span class='line'>    <span class="o">]]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CheckLogin</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>    <span class="vi">@app</span><span class="o">=</span><span class="n">app</span>
+</span><span class='line'>    <span class="vi">@opts</span><span class="o">=</span><span class="n">opts</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Request</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">env</span><span class="o">[</span><span class="s1">&#39;warden&#39;</span><span class="o">].</span><span class="n">logout</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="o">[</span><span class="s2">&quot;logout&quot;</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">env</span><span class="o">[</span><span class="s1">&#39;warden&#39;</span><span class="o">].</span><span class="n">authenticate!</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="ss">Warden</span><span class="p">:</span><span class="ss">:Strategies</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">valid?</span>
+</span><span class='line'>    <span class="n">params</span><span class="o">[</span><span class="s2">&quot;username&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;password&quot;</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">authenticate!</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;username&quot;</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;admin&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">params</span><span class="o">[</span><span class="s2">&quot;password&quot;</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;foobar&quot;</span>
+</span><span class='line'>      <span class="n">success!</span><span class="p">({})</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="nb">fail</span><span class="o">!</span><span class="p">(</span><span class="s2">&quot;Could not log in&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Session</span><span class="o">::</span><span class="no">Cookie</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="ss">Warden</span><span class="p">:</span><span class="ss">:Manager</span> <span class="k">do</span> <span class="o">|</span><span class="n">manager</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">manager</span><span class="o">.</span><span class="n">default_strategies</span> <span class="ss">:password</span>
+</span><span class='line'>  <span class="n">manager</span><span class="o">.</span><span class="n">failure_app</span> <span class="o">=</span> <span class="no">FailLoginApp</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">use</span> <span class="no">CheckLogin</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T12:58:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time></div>
+	<div class="tags">
+
+</div>
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+		
+		
+		<a class="addthis_button_tweet"></a>
+		
+		
+		
+	</div>
+	
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    tka
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>
