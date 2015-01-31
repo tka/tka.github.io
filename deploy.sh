@@ -17,5 +17,5 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin master
-git subtree push --force --prefix=public git@github.com:tka/tka.github.io gh-pages
+git subtree push -f --prefix=public git@github.com:tka/tka.github.io gh-pages
 
