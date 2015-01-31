@@ -19,6 +19,7 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin master
+git subtree push --prefix=public git@github.com:tka/tka.github.io gh-pages
 
 # Come Back
 cd ..
