@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jruby Fireapp on tka&#39;s blog</title>
+    <link>http://blog.tka.lu/categories/jruby-fireapp/</link>
+    <description>Recent content in Jruby Fireapp on tka&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-tw</language>
+    <lastBuildDate>Fri, 24 Aug 2012 22:16:00 +0800</lastBuildDate>
+    <atom:link href="http://blog.tka.lu/categories/jruby-fireapp/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Java7 &#43; JRuby 1.7.0.preview2 &#43; Rawr</title>
+      <link>http://blog.tka.lu/post/2012-08-24-java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/</link>
+      <pubDate>Fri, 24 Aug 2012 22:16:00 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2012-08-24-java7-plus-jruby-1-dot-7-0-dot-preview2-plus-rawr/</guid>
+      <description>&lt;p&gt;這兩天試著把 &lt;a href=&#34;http://fireapp.handlino.com/&#34;&gt;Fire.app&lt;/a&gt; 升級到 &lt;a href=&#34;http://jruby.org/&#34;&gt;JRuby&lt;/a&gt; 1.7.0.preview2, 過程中遇到一些 ruby 1.8.7 升級到 1.9.3 的小問題, 不過解決起來還算順手。後來同事想試試看搭配 Java7 的效果如何這時候就遇到問題了。&lt;/p&gt;
+
+&lt;p&gt;原因在於之前打包是使用 &lt;a href=&#34;https://github.com/rawr/rawr&#34;&gt;Rawr&lt;/a&gt;, 但是他使用的 &lt;a href=&#34;http://launch4j.sourceforge.net/&#34;&gt;launch4j&lt;/a&gt; 在 OS X 上面搭配 Java7 打包出來的程式無法順利執行。 看起來是因為　Java7 不是 apple 放出來的版本造成的。所以必須要改用 &lt;a href=&#34;http://java.net/projects/appbundler&#34;&gt;Java Application Bundler&lt;/a&gt;, 這邊最簡單的方法就是一樣用 Rawr 建立 jar 檔, 然後改寫　rawr:bundle:app 這個 rake task 就好了。&lt;/p&gt;
+
+&lt;p&gt;主要需要處理的部份有&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;移動程式目錄裡面的 &lt;code&gt;Contents/Resources/Java&lt;/code&gt; 到 &lt;code&gt;Contents/Java&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;複製 Java Application Bundler 專案中的 &lt;code&gt;JavaAppLauncher&lt;/code&gt; 這個檔案到 &lt;code&gt;Contents/MacOS&lt;/code&gt; 目錄下&lt;/li&gt;
+&lt;li&gt;改寫 &lt;code&gt;Contents/Info.plist&lt;/code&gt; 的部份內容如下, 這邊的細節可以參考 Java Application Bundler 的文件跟 source&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;    &amp;lt;key&amp;gt;CFBundleExecutable&amp;lt;/key&amp;gt;
+    &amp;lt;string&amp;gt;JavaAppLauncher&amp;lt;/string&amp;gt;
+    &amp;lt;key&amp;gt;JVMMainClassName&amp;lt;/key&amp;gt;
+    &amp;lt;string&amp;gt;com.handlino.fireapp.Main&amp;lt;/string&amp;gt;
+    &amp;lt;key&amp;gt;JVMOptions&amp;lt;/key&amp;gt;
+    &amp;lt;array&amp;gt;
+      &amp;lt;key&amp;gt;-XstartOnFirstThread&amp;lt;/key&amp;gt; 
+    &amp;lt;/array&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;做好這些步驟之後, 就可以像過去一樣輕鬆的打包出各個平台使用 Java7 + JRuby 1.7.0.preview2 程式&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
