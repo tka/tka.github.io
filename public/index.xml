@@ -6,8 +6,91 @@
     <description>Recent content on tka&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Mon, 26 Aug 2013 23:33:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 25 Mar 2015 02:53:09 +0800</lastBuildDate>
     <atom:link href="http://blog.tka.lu/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Postgresql Advisory Lock 測試</title>
+      <link>http://blog.tka.lu/post/2015-03-25-pg-advisory-lock-benchmark/</link>
+      <pubDate>Wed, 25 Mar 2015 02:53:09 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2015-03-25-pg-advisory-lock-benchmark/</guid>
+      <description>&lt;p&gt;前兩天聊天的時候聊到 Postgresql Advisory Lock&lt;/p&gt;
+
+&lt;p&gt;功能的介紹可以參考&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.postgresql.org/docs/9.4/static/explicit-locking.html#ADVISORY-LOCKS&#34;&gt;http://www.postgresql.org/docs/9.4/static/explicit-locking.html#ADVISORY-LOCKS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://hashrocket.com/blog/posts/advisory-locks-in-postgres&#34;&gt;http://hashrocket.com/blog/posts/advisory-locks-in-postgres&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;這邊直接看簡單的測試結果&lt;/p&gt;
+
+&lt;p&gt;pgbench 初始化參數是 &lt;code&gt;pgbench -Upostgres -i -s 10&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;先看單純 select for update 的測試script&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;BEGIN;
+    update pgbench_accounts set abalance = 1 where aid = (select aid from pgbench_accounts where abalance = 0 limit 1 for update );
+    \sleep 1 ms
+END;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;這邊測試裡面加了 sleep 1 ms 的原因是為了讓測試結果比較像是真實的使用情境, 在 update 完資料到 commit 之間可能還會做些事情, 這邊就假設多用了 1ms 吧&lt;/p&gt;
+
+&lt;p&gt;結果是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tarting vacuum...end.
+transaction type: Custom query
+scaling factor: 1
+query mode: simple
+number of clients: 200
+number of threads: 1
+number of transactions per client: 100
+number of transactions actually processed: 20000/20000
+latency average: 0.000 ms
+tps = 823.817249 (including connections establishing)
+tps = 829.889465 (excluding connections establishing)
+statement latencies in milliseconds:
+        0.105646        BEGIN;
+        122.298852          update pgbench_accounts set abalance = 1 where aid = (select aid from pgbench_accounts where abalance = 0 limit 1 for update );
+        1.083191            \sleep 1 ms
+        0.072635        END;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;再看用了 advisory lock 的測試script&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;BEGIN;
+   update pgbench_accounts set abalance = 1 where aid = (select  aid  from pgbench_accounts where abalance = 0 and  pg_try_advisory_xact_lock(aid) limit 1 for update);
+   \sleep 1 ms
+END;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;結果是&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;starting vacuum...end.
+transaction type: Custom query
+scaling factor: 1
+query mode: simple
+number of clients: 200
+number of threads: 1
+number of transactions per client: 100
+number of transactions actually processed: 20000/20000
+latency average: 0.000 ms
+tps = 7411.739157 (including connections establishing)
+tps = 7914.144198 (excluding connections establishing)
+statement latencies in milliseconds:
+        0.940393        BEGIN;
+        19.822141           update pgbench_accounts set abalance = 1 where aid = (select  aid  from pgbench_accounts where abalance = 0 and  pg_try_advisory_xact_lock(aid) limit 1 for update);
+        1.283840            \sleep 1 ms
+        1.779052        END;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;比較一下兩邊 tps 的結果 823 vs 7411&lt;/p&gt;
+
+&lt;p&gt;也就是說用了 advisory lock 後 tps 大概快了 8 倍&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Arch Linux 字型設定</title>

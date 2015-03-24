@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> Postgresql Advisory Lock 測試 &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu//css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>Postgresql Advisory Lock 測試</h1>
+  <span class="post-date">Wed, Mar 25, 2015</span>
+      <p>前兩天聊天的時候聊到 Postgresql Advisory Lock</p>
+
+<p>功能的介紹可以參考</p>
+
+<ul>
+<li><a href="http://www.postgresql.org/docs/9.4/static/explicit-locking.html#ADVISORY-LOCKS">http://www.postgresql.org/docs/9.4/static/explicit-locking.html#ADVISORY-LOCKS</a></li>
+<li><a href="http://hashrocket.com/blog/posts/advisory-locks-in-postgres">http://hashrocket.com/blog/posts/advisory-locks-in-postgres</a></li>
+</ul>
+
+<p>這邊直接看簡單的測試結果</p>
+
+<p>pgbench 初始化參數是 <code>pgbench -Upostgres -i -s 10</code></p>
+
+<p>先看單純 select for update 的測試script</p>
+
+<pre><code>BEGIN;
+    update pgbench_accounts set abalance = 1 where aid = (select aid from pgbench_accounts where abalance = 0 limit 1 for update );
+    \sleep 1 ms
+END;
+</code></pre>
+
+<p>這邊測試裡面加了 sleep 1 ms 的原因是為了讓測試結果比較像是真實的使用情境, 在 update 完資料到 commit 之間可能還會做些事情, 這邊就假設多用了 1ms 吧</p>
+
+<p>結果是</p>
+
+<pre><code>tarting vacuum...end.
+transaction type: Custom query
+scaling factor: 1
+query mode: simple
+number of clients: 200
+number of threads: 1
+number of transactions per client: 100
+number of transactions actually processed: 20000/20000
+latency average: 0.000 ms
+tps = 823.817249 (including connections establishing)
+tps = 829.889465 (excluding connections establishing)
+statement latencies in milliseconds:
+        0.105646        BEGIN;
+        122.298852          update pgbench_accounts set abalance = 1 where aid = (select aid from pgbench_accounts where abalance = 0 limit 1 for update );
+        1.083191            \sleep 1 ms
+        0.072635        END;
+</code></pre>
+
+<p>再看用了 advisory lock 的測試script</p>
+
+<pre><code>BEGIN;
+   update pgbench_accounts set abalance = 1 where aid = (select  aid  from pgbench_accounts where abalance = 0 and  pg_try_advisory_xact_lock(aid) limit 1 for update);
+   \sleep 1 ms
+END;
+</code></pre>
+
+<p>結果是</p>
+
+<pre><code>starting vacuum...end.
+transaction type: Custom query
+scaling factor: 1
+query mode: simple
+number of clients: 200
+number of threads: 1
+number of transactions per client: 100
+number of transactions actually processed: 20000/20000
+latency average: 0.000 ms
+tps = 7411.739157 (including connections establishing)
+tps = 7914.144198 (excluding connections establishing)
+statement latencies in milliseconds:
+        0.940393        BEGIN;
+        19.822141           update pgbench_accounts set abalance = 1 where aid = (select  aid  from pgbench_accounts where abalance = 0 and  pg_try_advisory_xact_lock(aid) limit 1 for update);
+        1.283840            \sleep 1 ms
+        1.779052        END;
+</code></pre>
+
+<p>比較一下兩邊 tps 的結果 823 vs 7411</p>
+
+<p>也就是說用了 advisory lock 後 tps 大概快了 8 倍</p>
+
+</div>
+</div>
+
+  </body>
+</html>
