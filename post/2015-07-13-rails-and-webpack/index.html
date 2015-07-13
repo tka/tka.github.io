@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> 用 webpack 取代 Rails Asset Pipeline &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu//css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>用 webpack 取代 Rails Asset Pipeline</h1>
+  <span class="post-date">Mon, Jul 13, 2015</span>
+      <p>Rails 的 Asset Pipeline 十分好用, 但是跟 webpack 比起來還是有不小的落差</p>
+
+<p>所以研究了一下把 Rails 前端的部份整個換成 webpack 的方法</p>
+
+<p>希望達到的目標有</p>
+
+<ol>
+<li>原本在 app/assets 下的東西還是放在下面</li>
+<li>原本使用的 helper 名稱繼續沿用</li>
+<li>建立出來的檔案有打上 digest</li>
+<li>特定的 third party js 跟 images 不需要透過 require 處理, 只需直接將檔名打上 digest</li>
+</ol>
+
+<p>調整的設定檔大致上就是 <a href="https://gist.github.com/tka/45f2923236ad615dcdd5">https://gist.github.com/tka/45f2923236ad615dcdd5</a></p>
+
+<p>原理是</p>
+
+<ol>
+<li>webpack 輸出檔案到 /public/assets 下</li>
+<li>透過 static_resources.js 把 third party js 跟 image 都 requie 進來, 然後用 file-loader 輸出成檔案</li>
+<li>webpack 跑完之後讓他吐一個 manifest.json 然後改寫 rails helper 改成從 manifest.json 內拿到編譯完的檔案名稱</li>
+</ol>
+
+<p>如此初步看起來就可以滿足需求了, 下個專案有機會的話就來實戰看看</p>
+
+</div>
+</div>
+
+  </body>
+</html>
