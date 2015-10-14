@@ -20,7 +20,7 @@ disqusShortname = "tkalublog"
 ## All parameters below here are optional and can be mixed and matched.
 ##
 [params]
-twitter   = "tkalu"
-github    = "tka"
+twitter   = "https://twitter.com/tkalu"
+github    = "https://github.com/tka"
 copyright = "Written by tka.lu"
 analytics = "UA-21030742-4"
