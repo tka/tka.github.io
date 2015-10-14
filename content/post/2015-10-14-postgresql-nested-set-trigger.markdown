@@ -1,6 +1,6 @@
 +++
 date = "2015-10-14T23:22:22+08:00"
-draft = true
+draft = false
 title = "PostgreSQL 中利用 trigger 來維護 nested set 結構"
 
 +++

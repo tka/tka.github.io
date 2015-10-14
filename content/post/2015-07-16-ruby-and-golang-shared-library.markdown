@@ -1,6 +1,6 @@
 +++
 date = "2015-07-16T13:03:04+08:00"
-draft = true
+draft = false
 title = "使用 Golang 的 Shared Library 來幫 Ruby 專案加速"
 
 +++

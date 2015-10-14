@@ -2,8 +2,8 @@
 
 echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 
-# Build the project. 
-hugo --theme=hyde --buildDrafts # if using a theme, replace by `hugo -t <yourtheme>`
+# Build the project.
+hugo --theme=angels-ladder --buildDrafts # if using a theme, replace by `hugo -t <yourtheme>`
 
 # Add changes to git.
 git add -A
@@ -17,5 +17,5 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin source
-git subtree push --prefix=public git@github.com:tka/tka.github.io master 
+git subtree push --prefix=public git@github.com:tka/tka.github.io master
 

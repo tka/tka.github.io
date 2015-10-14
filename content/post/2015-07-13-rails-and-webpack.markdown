@@ -1,6 +1,6 @@
 +++
 date = "2015-07-13T22:24:44+08:00"
-draft = true
+draft = false
 title = "用 webpack 取代 Rails Asset Pipeline"
 
 +++
