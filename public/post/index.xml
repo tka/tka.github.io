@@ -6,8 +6,91 @@
     <description>Recent content in Posts on tka&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Thu, 16 Jul 2015 13:03:04 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 14 Oct 2015 23:22:22 +0800</lastBuildDate>
     <atom:link href="http://blog.tka.lu/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>PostgreSQL 中利用 trigger 來維護 nested set 結構</title>
+      <link>http://blog.tka.lu/post/2015-10-14-postgresql-nested-set-trigger/</link>
+      <pubDate>Wed, 14 Oct 2015 23:22:22 +0800</pubDate>
+      
+      <guid>http://blog.tka.lu/post/2015-10-14-postgresql-nested-set-trigger/</guid>
+      <description>&lt;p&gt;Ref.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database&#34;&gt;http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://sites.google.com/site/postgresqlnestedsetstriggers/&#34;&gt;https://sites.google.com/site/postgresqlnestedsetstriggers/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;調整出來比較順手的版本, 只需要設定 node 的 left 就會調整好資料結構&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;CREATE OR REPLACE FUNCTION items_nested_set_handler() RETURNS TRIGGER AS $$
+DECLARE
+  set_size INTEGER;
+  set_offset INTEGER;
+  mid_lft INTEGER;
+  mid_rgt INTEGER;
+BEGIN
+
+  --------------------------INSERT---------------
+  IF (TG_OP = &#39;INSERT&#39;) THEN
+    UPDATE items SET
+      lft = CASE WHEN lft &amp;gt;=  NEW.lft THEN lft+2 ELSE lft END,
+      rgt = CASE WHEN rgt &amp;gt;= NEW.lft THEN rgt+2 ELSE rgt END
+    WHERE foldr_id = NEW.foldr_id;
+
+    UPDATE items SET lft = NEW.lft, rgt = (NEW.lft+1) WHERE id=NEW.id;
+
+
+  --------------------------DELETE---------------
+  ELSIF (TG_OP = &#39;DELETE&#39;) THEN
+    DELETE FROM items WHERE lft BETWEEN OLD.lft AND OLD.rgt AND foldr_id = OLD.foldr_id;
+
+    UPDATE items SET
+      lft = CASE WHEN lft &amp;gt; OLD.lft THEN lft - (OLD.rgt - OLD.lft + 1) ELSE lft END,
+      rgt = CASE WHEN rgt &amp;gt; OLD.lft THEN rgt - (OLD.rgt - OLD.lft + 1) ELSE rgt END
+    WHERE foldr_id = OLD.foldr_id;
+
+  -------------------------UPDATE----------------
+  ELSIF (TG_OP = &#39;UPDATE&#39;) THEN
+    IF (OLD.lft != NEW.lft) THEN
+      set_size := OLD.rgt - OLD.lft + 1;
+      mid_lft := CASE WHEN NEW.lft &amp;gt; OLD.lft THEN OLD.lft ELSE OLD.lft + set_size END;
+      mid_rgt := CASE WHEN NEW.lft &amp;gt; OLD.lft THEN OLD.rgt ELSE OLD.rgt + set_size END;
+      set_offset := NEW.lft - mid_lft ;
+
+      UPDATE items SET lft = OLD.lft WHERE id = OLD.id; -- recovery item lft
+
+      UPDATE items SET
+        lft = CASE WHEN lft &amp;gt;= NEW.lft THEN lft + set_size ELSE lft END,
+        rgt = CASE WHEN rgt &amp;gt;= NEW.lft THEN rgt + set_size ELSE rgt END
+      WHERE foldr_id = OLD.foldr_id;
+
+      UPDATE items SET
+        lft = lft + set_offset, rgt = rgt + set_offset
+      WHERE lft BETWEEN mid_lft AND mid_rgt AND foldr_id = OLD.foldr_id;
+
+      UPDATE items SET
+        lft = CASE WHEN lft &amp;gt; mid_lft THEN lft - set_size ELSE lft END,
+        rgt = CASE WHEN rgt &amp;gt; mid_lft THEN rgt - set_size ELSE rgt END
+      WHERE foldr_id = OLD.foldr_id;
+
+    END IF;
+  END IF;
+
+  RETURN NULL;
+END;
+$$ language plpgsql;
+-- +goose StatementEnd
+
+DROP TRIGGER IF EXISTS items_nested_set_trigger ON items;
+
+CREATE TRIGGER items_nested_set_trigger
+AFTER INSERT OR UPDATE OR DELETE ON items
+FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE PROCEDURE items_nested_set_handler();
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>使用 Golang 的 Shared Library 來幫 Ruby 專案加速</title>
@@ -744,169 +827,6 @@ use CheckLogin
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;詳細搜尋的語法需參考&lt;a href=&#34;http://www.elasticsearch.org/guide/reference/query-dsl/&#34;&gt;這頁&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>在 &lt;del&gt;Compass.app&lt;/del&gt; Fire.app 中使用ERB/Haml樣板語言</title>
-      <link>http://blog.tka.lu/post/2012-02-20-zai-compassappzhong-shi-yong-erb-slash-hamlyang-ban/</link>
-      <pubDate>Mon, 20 Feb 2012 22:02:00 +0800</pubDate>
-      
-      <guid>http://blog.tka.lu/post/2012-02-20-zai-compassappzhong-shi-yong-erb-slash-hamlyang-ban/</guid>
-      <description>
-
-&lt;h2 id=&#34;2012-04-17-更新:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;2012-04-17 更新&lt;/h2&gt;
-
-&lt;p&gt;文中提到的 Compass.app, 正式發行時改名為 &lt;a href=&#34;http://fireapp.handlino.com&#34;&gt;Fire.app&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;簡介:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;簡介&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://compass.handlino.com/&#34;&gt;Coompass.app&lt;/a&gt;將要釋出新版本支援 ERB/Haml 樣板, 過去使用 Compass.app 雖然提供了簡單的 web server, 但是做網站 prototype 時, 總是要一頁一頁 html 用手工刻. 但是現在不用了因為即將更新的 Compass.app 會支援 ERB 跟 Haml 兩種樣板語言&lt;/p&gt;
-
-&lt;h2 id=&#34;改用-erb-或-haml-樣板語言的好處:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;改用 ERB 或 Haml 樣板語言的好處&lt;/h2&gt;
-
-&lt;h4 id=&#34;可以套用-layout-跟使用-partial:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以套用 layout 跟使用 partial&lt;/h4&gt;
-
-&lt;p&gt;網站的 Header 與 Footer 常常是重複的, 當老闆說網站的標題要改掉時, 原本你需要改100個頁面, 現在你只需要改一個檔案就可以了, 或是寫過的 sidebar , 寫新的一頁時再也不用整段 html 複製貼上了.&lt;/p&gt;
-
-&lt;h4 id=&#34;可以使用-helper:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以使用 helper&lt;/h4&gt;
-
-&lt;p&gt;導覽列上目前頁面的連結, 總是要顯示出跟其他連結不同的樣式, 像是要在 class 上加上 current, 來做出特別的效果, 搭配 helper 你再也不用一頁一頁修改, 現在是哪個連結是當前頁面的連結了&lt;/p&gt;
-
-&lt;p&gt;要插入一段沒有意義文字, 讓版面看起來比較像真的網站. 過去可以使用 &lt;a href=&#34;http://more.handlino.com/&#34;&gt;MoreText&lt;/a&gt; 用 javascript 插入假文, 現在可以讓 helper 直接把 MoreText 的假文插入網頁裡, 開發更加方便！
-&amp;lt;!&amp;ndash; more &amp;ndash;&amp;gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;可以使用-ruby-語法:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;可以使用 Ruby 語法&lt;/h4&gt;
-
-&lt;p&gt;如果願意的話, 還可學一點 Ruby 程式語言的語法, 如此再寫網頁時便可以快速的完成工作, 例如要列出 10 筆文章的標題只要像下面這樣寫就可以了&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  &amp;lt;ul&amp;gt;
-    &amp;lt;% (1..10).each do |x|%&amp;gt;
-      &amp;lt;li&amp;gt;文章&amp;lt;%=x%&amp;gt; 標題&amp;lt;/li&amp;gt;
-    &amp;lt;% end %&amp;gt;
-  &amp;lt;/ul&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;就會得到下面的html&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;ul&amp;gt;
-  &amp;lt;li&amp;gt;文章 1 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 2 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 3 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 4 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 5 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 6 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 7 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 8 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 9 標題&amp;lt;/li&amp;gt;
-  &amp;lt;li&amp;gt;文章 10 標題&amp;lt;/li&amp;gt;
-&amp;lt;/ul&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;樣板語法相關資料:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;樣板語法相關資料&lt;/h3&gt;
-
-&lt;p&gt;接下來只會提到在 Compass.app 環境中使用 ERB 或是 Haml 的使用方式, 而這兩種樣板語言的語法將不會被提到, 所以建議先參考下列幾個網址先學會 ERB 跟 Haml 的語法&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ERB
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html&#34;&gt;http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://rrn.dk/rubys-erb-templating-system&#34;&gt;http://rrn.dk/rubys-erb-templating-system&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.stuartellis.eu/articles/erb/&#34;&gt;http://www.stuartellis.eu/articles/erb/&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-&lt;li&gt;Haml
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://haml-lang.com/&#34;&gt;http://haml-lang.com/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.meituo.net/2011/03/27/haml-%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/&#34;&gt;http://blog.meituo.net/2011/03/27/haml-%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;搭配-compass-app-使用方式:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;搭配 Compass.app 使用方式&lt;/h3&gt;
-
-&lt;h4 id=&#34;建立頁面:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;建立頁面&lt;/h4&gt;
-
-&lt;p&gt;把檔案放在  專案目錄下, 檔名用 &lt;code&gt;.html.erb&lt;/code&gt; 結尾的會使用 ERB 樣板語言, 用 &lt;code&gt;.html.haml&lt;/code&gt; 結為尾的會使用 Haml 樣板語言處理, 而對對應的網址就是 &lt;code&gt;http://127.0.0.1:24680/ + 檔名&lt;/code&gt; 去掉結尾的 &lt;code&gt;.erb&lt;/code&gt; 或 &lt;code&gt;.haml&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;例如:
-  專案目錄下面建立一個檔案, 命名為 &lt;code&gt;home.html.erb&lt;/code&gt;, 寫入一些內容. 然後從瀏覽器中開啟 &lt;code&gt;http://127.0.0.1:24680/home.html&lt;/code&gt; 就可以看到剛剛建立的網頁了. 同理如果是放在 Compass 專案目錄下面的 &lt;code&gt;about&lt;/code&gt; 目錄的 &lt;code&gt;company.html.erb&lt;/code&gt; 跟 &lt;code&gt;contact.html.haml&lt;/code&gt;, 網址就會是 &lt;code&gt;http://127.0.0.1:24680/about/company.html&lt;/code&gt; 跟 &lt;code&gt;http://127.0.0.1:24680/about/contact.html&lt;/code&gt;&lt;/p&gt;
-
-&lt;h4 id=&#34;套用-layout:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 layout&lt;/h4&gt;
-
-&lt;p&gt;頁面有兩種方法可以套用 layout&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;指定頁面 layout 檔案&lt;/li&gt;
-&lt;li&gt;頁面同目錄或是上層目錄有 _layout.html.erb&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h5 id=&#34;頁面同目錄或是上層目錄有-layout-html-erb:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;頁面同目錄或是上層目錄有 _layout.html.erb&lt;/h5&gt;
-
-&lt;p&gt;如果頁面沒有指定目錄, 而且頁面所在目錄或是上層目錄中有檔案被命名為&lt;code&gt;_layout.html.erb&lt;/code&gt;, 就會使用該檔案作為 layout 檔案 ._&lt;/p&gt;
-
-&lt;p&gt;例如:
-有 &lt;code&gt;/_layout.html.erb&lt;/code&gt; 存在且 &lt;code&gt;/about/_layout.html.erb&lt;/code&gt; 不存在, 那 &lt;code&gt;/about/me.html.erb&lt;/code&gt; 跟 &lt;code&gt;/about/contact.html.erb&lt;/code&gt; 都會用 &lt;code&gt;/_layout.html.erb&lt;/code&gt; 當作 layout 檔案&lt;/p&gt;
-
-&lt;h5 id=&#34;指定頁面-layout-檔案:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;指定頁面 layout 檔案&lt;/h5&gt;
-
-&lt;p&gt;建立一個新檔案, 命名方式是將頁面檔案的檔名結尾從 &lt;code&gt;.html.erb&lt;/code&gt; 或是 &lt;code&gt;.html.haml&lt;/code&gt; 改成 &lt;code&gt;.html.layout&lt;/code&gt;, 同時在該檔案裏面指定要當作 layout 的檔案名增&lt;/p&gt;
-
-&lt;p&gt;例如:
-&lt;code&gt;/about/me.html.erb&lt;/code&gt; 要指定使用 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt; 當作 layout 檔案, 就要建立新檔案並且命名為 &lt;code&gt;/about/me.html.layout&lt;/code&gt;, 然後在 &lt;code&gt;/about/me.html.layout&lt;/code&gt; 裏面寫 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt;, 這樣就會使用 &lt;code&gt;/about/mylayout.html.erb&lt;/code&gt; 來當作 layout 檔案而不是 &lt;code&gt;_layout.html.erb&lt;/code&gt; 了&lt;/p&gt;
-
-&lt;p&gt;layout 檔案內容會長的像是下面的樣子, 其中 &lt;code&gt;&amp;lt;%= yield%&amp;gt;&lt;/code&gt; 位置就是頁面會被載入的地方&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;!DOCTYPE html&amp;gt;
-&amp;lt;!--[if lt IE 7]&amp;gt; &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie6 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
-&amp;lt;!--[if IE 7]&amp;gt;    &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie7 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
-&amp;lt;!--[if IE 8]&amp;gt;    &amp;lt;html lang=&amp;quot;en&amp;quot; class=&amp;quot;no-js ie8 oldie&amp;quot;&amp;gt; &amp;lt;![endif]--&amp;gt;
-&amp;lt;!--[if gt IE 8]&amp;gt;&amp;lt;!--&amp;gt;
-  &amp;lt;html class=&#39;no-js&#39; lang=&#39;en&#39;&amp;gt;
-    &amp;lt;!--&amp;lt;![endif]--&amp;gt;
-    &amp;lt;head&amp;gt;
-        &amp;lt;meta charset=&#39;utf-8&#39; /&amp;gt;
-        &amp;lt;meta content=&#39;IE=edge,chrome=1&#39; http-equiv=&#39;X-UA-Compatible&#39; /&amp;gt;
-        &amp;lt;title&amp;gt;Site Title&amp;lt;/title&amp;gt;
-        &amp;lt;meta content=&#39;&#39; name=&#39;description&#39; /&amp;gt;
-        &amp;lt;meta content=&#39;&#39; name=&#39;author&#39; /&amp;gt;
-        &amp;lt;meta content=&#39;width=device-width, initial-scale=1.0&#39; name=&#39;viewport&#39; /&amp;gt;
-        &amp;lt;link href=&#39;http://blog.tka.lu/stylesheets/style.css&amp;quot;%&amp;gt;&#39; rel=&#39;stylesheet&#39; /&amp;gt;
-        &amp;lt;script src=&#39;http://blog.tka.lu/javascripts/modernizr-2.5.3.js&#39;&amp;gt;&amp;lt;/script&amp;gt;
-    &amp;lt;/head&amp;gt;
-    &amp;lt;body&amp;gt;
-        &amp;lt;div id=&#39;container&#39;&amp;gt;
-            &amp;lt;header&amp;gt;&amp;lt;/header&amp;gt;
-            &amp;lt;div id=&#39;main&#39; role=&#39;main&#39;&amp;gt;
-                &amp;lt;%= yield%&amp;gt;
-            &amp;lt;/div&amp;gt;
-
-            &amp;lt;div id=&amp;quot;root-footer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-        &amp;lt;/div&amp;gt;
-        &amp;lt;div id=&amp;quot;footer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
-    &amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;套用-partial:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 partial&lt;/h3&gt;
-
-&lt;p&gt;partial 是只網頁片段內容, 只要在建立檔案時用底線&lt;code&gt;_&lt;/code&gt;開頭就可以當作 partial 呼叫, ex. &lt;code&gt;_top_nav.html.erb&lt;/code&gt;
-呼叫的時候只需要在頁面裏面寫 &lt;code&gt;&amp;lt;%= render(&amp;quot;top_nav&amp;quot;)%&amp;gt;&lt;/code&gt;就可以了, 這邊不需要&lt;code&gt;_&lt;/code&gt;跟&lt;code&gt;.html.erb&lt;/code&gt;歐, 不管是頁面, layout 還是 partial 都可以使用 partial 來載入常用的內容&lt;/p&gt;
-
-&lt;h3 id=&#34;套用-helper:5f96eb8ef2bed8aef07ad8ea88197daf&#34;&gt;套用 helper&lt;/h3&gt;
-
-&lt;p&gt;編寫頁面時可以透過 &lt;code&gt;&amp;lt;%= helper名稱(helper參數1, helper參數2..)%&amp;gt;&lt;/code&gt; 的方式來呼叫 helper, 所以其實套用 partial 時也是透過呼叫叫作 &lt;code&gt;render&lt;/code&gt; 的 helper 來達成載入 partial 檔案內容的工作&lt;/p&gt;
-
-&lt;p&gt;目前 Compass.app 內建的 helper 可以參考 &lt;a href=&#34;http://get-serve.com/documentation/view-helpers&#34;&gt;Serve View Helpers&lt;/a&gt;, 如果要定義自己的 helper, 需要 Ruby 語言的基礎, 方法是在 Compass 專案目錄中建立 &lt;code&gt;view_helpers.rb&lt;/code&gt;　內容如下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;module ViewHelpers
-  def helper_name(arg1, arg2, ....)
-      return &amp;quot;something&amp;quot;
-  end
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果要做到前面提到的當前頁面標示跟載入 MoreText 可以下載&lt;a href=&#34;https://gist.github.com/970ce5226b95e2ec52dd&#34;&gt;檔案&lt;/a&gt;放到  專案目錄中, 如此 link_to helper 會在當前網頁路徑(ex. &lt;code&gt;/about/me.html&lt;/code&gt;)相同的連結中加上 &lt;code&gt;class=&amp;quot;current&amp;quot;&lt;/code&gt;, moretext  helper 則可插入 MoreText 資料&lt;/p&gt;
 </description>
     </item>
     

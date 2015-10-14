@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> PostgreSQL 中利用 trigger 來維護 nested set 結構 &middot; tka&#39;s blog </title>
+
+  
+  <link rel="stylesheet" href="http://blog.tka.lu//css/poole.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/syntax.css">
+  <link rel="stylesheet" href="http://blog.tka.lu//css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.tka.lu/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.tka.lu/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="tka&#39;s blog" />
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>tka&#39;s blog</h1>
+      <p class="lead"></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.tka.lu/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2015. All rights reserved. </p>
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="post">
+  <h1>PostgreSQL 中利用 trigger 來維護 nested set 結構</h1>
+  <span class="post-date">Wed, Oct 14, 2015</span>
+      <p>Ref.</p>
+
+<ol>
+<li><a href="http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database">http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database</a></li>
+<li><a href="https://sites.google.com/site/postgresqlnestedsetstriggers/">https://sites.google.com/site/postgresqlnestedsetstriggers/</a></li>
+</ol>
+
+<p>調整出來比較順手的版本, 只需要設定 node 的 left 就會調整好資料結構</p>
+
+<pre><code>CREATE OR REPLACE FUNCTION items_nested_set_handler() RETURNS TRIGGER AS $$
+DECLARE
+  set_size INTEGER;
+  set_offset INTEGER;
+  mid_lft INTEGER;
+  mid_rgt INTEGER;
+BEGIN
+
+  --------------------------INSERT---------------
+  IF (TG_OP = 'INSERT') THEN
+    UPDATE items SET
+      lft = CASE WHEN lft &gt;=  NEW.lft THEN lft+2 ELSE lft END,
+      rgt = CASE WHEN rgt &gt;= NEW.lft THEN rgt+2 ELSE rgt END
+    WHERE foldr_id = NEW.foldr_id;
+
+    UPDATE items SET lft = NEW.lft, rgt = (NEW.lft+1) WHERE id=NEW.id;
+
+
+  --------------------------DELETE---------------
+  ELSIF (TG_OP = 'DELETE') THEN
+    DELETE FROM items WHERE lft BETWEEN OLD.lft AND OLD.rgt AND foldr_id = OLD.foldr_id;
+
+    UPDATE items SET
+      lft = CASE WHEN lft &gt; OLD.lft THEN lft - (OLD.rgt - OLD.lft + 1) ELSE lft END,
+      rgt = CASE WHEN rgt &gt; OLD.lft THEN rgt - (OLD.rgt - OLD.lft + 1) ELSE rgt END
+    WHERE foldr_id = OLD.foldr_id;
+
+  -------------------------UPDATE----------------
+  ELSIF (TG_OP = 'UPDATE') THEN
+    IF (OLD.lft != NEW.lft) THEN
+      set_size := OLD.rgt - OLD.lft + 1;
+      mid_lft := CASE WHEN NEW.lft &gt; OLD.lft THEN OLD.lft ELSE OLD.lft + set_size END;
+      mid_rgt := CASE WHEN NEW.lft &gt; OLD.lft THEN OLD.rgt ELSE OLD.rgt + set_size END;
+      set_offset := NEW.lft - mid_lft ;
+
+      UPDATE items SET lft = OLD.lft WHERE id = OLD.id; -- recovery item lft
+
+      UPDATE items SET
+        lft = CASE WHEN lft &gt;= NEW.lft THEN lft + set_size ELSE lft END,
+        rgt = CASE WHEN rgt &gt;= NEW.lft THEN rgt + set_size ELSE rgt END
+      WHERE foldr_id = OLD.foldr_id;
+
+      UPDATE items SET
+        lft = lft + set_offset, rgt = rgt + set_offset
+      WHERE lft BETWEEN mid_lft AND mid_rgt AND foldr_id = OLD.foldr_id;
+
+      UPDATE items SET
+        lft = CASE WHEN lft &gt; mid_lft THEN lft - set_size ELSE lft END,
+        rgt = CASE WHEN rgt &gt; mid_lft THEN rgt - set_size ELSE rgt END
+      WHERE foldr_id = OLD.foldr_id;
+
+    END IF;
+  END IF;
+
+  RETURN NULL;
+END;
+$$ language plpgsql;
+-- +goose StatementEnd
+
+DROP TRIGGER IF EXISTS items_nested_set_trigger ON items;
+
+CREATE TRIGGER items_nested_set_trigger
+AFTER INSERT OR UPDATE OR DELETE ON items
+FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE PROCEDURE items_nested_set_handler();
+</code></pre>
+
+</div>
+</div>
+
+  </body>
+</html>
